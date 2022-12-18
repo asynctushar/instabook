@@ -5,8 +5,7 @@ const databaseConnect = () => {
     mongoose.connect(process.env.DB_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        autoIndex: true,
-        strictQuery: false
+        autoIndex: true
     })
         .then((data) => {
             console.log(`Database connected to ${data.connection.host}`)
