@@ -1,5 +1,9 @@
-const sendToken = (user, statusCode, res) => {
+const getFriendList = require("./getFriendList");
+
+const sendToken = async (user, statusCode, res) => {
     const token = user.generateAuthToken();
+
+    const friends = await getFriendList(user)
 
     const options = {
         expires: new Date(
@@ -10,7 +14,8 @@ const sendToken = (user, statusCode, res) => {
 
     res.status(statusCode).cookie('token', token, options).json({
         success: true,
-        user
+        user,
+        friends
     })
 }
 

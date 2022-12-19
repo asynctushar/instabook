@@ -10,7 +10,6 @@ router.route('/logout').get(isAuthenticatedUser, logoutUser);
 router.route('/me').get(isAuthenticatedUser, getOwnUserDetails);
 router.route('/me/friend/add/:id').get(isAuthenticatedUser, addFriend);
 router.route('/me/friend/remove/:id').get(isAuthenticatedUser, removeFriend);
-router.route('/me/friends').get(isAuthenticatedUser, getFriendList);
 router.route('/user/:id').get(isAuthenticatedUser, getUserDetails);
 
 module.exports = router;

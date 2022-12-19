@@ -9,6 +9,7 @@ if (process.env.NODE_ENV != "PRODUCTION") {
 
 // Route Import 
 const userRoutes = require('./routes/userRoutes');
+const postRoutes = require('./routes/postRoutes');
 const errorMiddleware = require('./middlewares/error');
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: true, limit: "60mb" }));
 app.use(cookieParser());
 
 app.use('/api/v1', userRoutes);
+app.use('/api/v1', postRoutes);
 
 // middleware for errors
 app.use(errorMiddleware);

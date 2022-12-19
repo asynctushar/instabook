@@ -8,19 +8,22 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please enter your name."],
         maxlength: [30, "Name can't exceed 30 characters."],
-        minlength: [4, "Name should have minimum 4 characters."]
+        minlength: [4, "Name should have minimum 4 characters."],
+        Trim: true
     },
     email: {
         type: String,
         required: [true, "Please enter your email."],
         unique: [true, "Email already exist."],
-        validate: [validator.isEmail, "Please enter a valid email."]
+        validate: [validator.isEmail, "Please enter a valid email."],
+        trim: true
     },
     password: {
         type: String,
         required: [true, "Please enter your password."],
         minlength: [8, "Password should have minimum 8 characters."],
-        select: false
+        select: false,
+        trim: true
     },
     friends: [
         {
@@ -40,24 +43,25 @@ const userSchema = new mongoose.Schema({
     },
     location: {
         type: String,
-        required: [true, "Please enter your location."]
+        required: [true, "Please enter your location."],
+        trim: true
     },
     occupation: {
         type: String,
-        required: [true, "Please enter your occupation."]
+        required: [true, "Please enter your occupation."],
+        trim: true
     },
     viewedProfile: Number,
     impressions: Number
-},
-    {
-        timestamps: true
-    });
+
+}, { timestamps: true });
 
 // delete user password before send off
 userSchema.methods.toJSON = function () {
     const user = this;
     const userObject = user.toObject();
     delete userObject.password;
+    delete userObject.friends;
 
     return userObject;
 }

@@ -1,6 +1,7 @@
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const User = require("../models/User");
 const ErrorHandler = require("../utils/errorHandler");
+const getFriendList = require("../utils/getFriendList");
 const sendToken = require("../utils/sendToken");
 
 // Register new user
@@ -11,7 +12,7 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
 
     const user = await User.create({ name, email, password, avatar, location, occupation });
 
-    sendToken(user, 201, res);
+    await sendToken(user, 201, res);
 });
 
 // Login user
@@ -32,42 +33,45 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Incorrect login information.", 401));
     }
 
-    sendToken(user, 200, res);
+    await sendToken(user, 200, res);
 });
 
 // get own user details
-exports.getOwnUserDetails = catchAsyncErrors((req, res, next) => {
-    const user = req.user.toObject();
-
-    delete user.friends;
+exports.getOwnUserDetails = catchAsyncErrors(async (req, res, next) => {
+    const friends = await getFriendList(req.user);
 
     res.status(200).json({
         success: true,
-        user
+        user: req.user,
+        friends
     })
 })
 
-// get user details by others
+// get others user details
 exports.getUserDetails = catchAsyncErrors(async (req, res, next) => {
     const id = req.params.id;
 
-    const user = await User.findById(id)
+    const user = await User.findById(id);
     if (!user) {
         return next(new ErrorHandler("User not found.", 404));
     }
 
-    const modifiedUser = {
+    const isFriend = req.user.friends.includes(id);
+
+    const formattedUser = {
         id: user.id,
         name: user.name,
         avatar: user.avatar,
         location: user.location,
         occupation: user.occupation,
-        impressions: user.impressions
+        impressions: user.impressions,
+        viewedProfile: user.viewedProfile,
+        isFriend
     }
 
     res.status(200).json({
         success: true,
-        user: modifiedUser
+        user: formattedUser
     })
 });
 
@@ -103,14 +107,17 @@ exports.addFriend = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("User is already in your friendlist", 400));
     }
 
-    user.friends.push(id);
-    friend.friends.push(user.id);
+    user.friends.unshift(id);
+    friend.friends.unshift(user.id);
 
     await user.save();
     await friend.save();
+    
+    const friends = await getFriendList(user);
 
     res.status(200).json({
         success: true,
+        friends,
         message: "User added to your friend list."
     })
 })
@@ -139,32 +146,12 @@ exports.removeFriend = catchAsyncErrors(async (req, res, next) => {
     await user.save();
     await friend.save();
 
+    const friends = await getFriendList(user);
+
     res.status(400).json({
         success: true,
+        friends,
         message: "User removed from your friend list."
     })
 
 });
-
-// get your friendList
-exports.getFriendList = catchAsyncErrors(async (req, res, next) => {
-    const user = req.user;
-
-    await user.populate("friends")
-
-    const Modifiedfriends = user.friends.map((friend) => {
-        return {
-            id: friend.id,
-            name: friend.name,
-            avatar: friend.avatar,
-            location: friend.location,
-            occupation: friend.occupation,
-            impressions: friend.impressions
-        }
-    })
-
-    res.status(400).json({
-        success: true,
-        friends: Modifiedfriends
-    })
-})
