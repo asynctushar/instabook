@@ -10,6 +10,7 @@ if (process.env.NODE_ENV != "PRODUCTION") {
 // Route Import 
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
+const commentRoutes = require('./routes/commentRoutes');
 const errorMiddleware = require('./middlewares/error');
 
 const app = express();
@@ -20,6 +21,7 @@ app.use(cookieParser());
 
 app.use('/api/v1', userRoutes);
 app.use('/api/v1', postRoutes);
+app.use('/api/v1', commentRoutes);
 
 // middleware for errors
 app.use(errorMiddleware);

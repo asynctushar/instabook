@@ -30,8 +30,8 @@ const postSchema = new mongoose.Schema({
     },
     comments: [
         {
-            types: mongoose.Schema.Types.ObjectId,
-            // ref: "Comments"
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Comments"
         }
     ]
 }, { timestamps: true });

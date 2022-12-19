@@ -1,5 +1,6 @@
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 const Post = require('../models/Post');
+const Comment = require('../models/Comments');
 const getUserDetails = require('../utils/getUserDetails');
 const ErrorHandler = require('../utils/errorHandler');
 const User = require('../models/User');
@@ -22,12 +23,14 @@ exports.createPost = catchAsyncErrors(async (req, res, next) => {
     // all posts with user details
     const formattedAllPosts = await Promise.all(allposts.map(async (post) => {
         const user = await getUserDetails(post.user, req);
+        const isLiked = post.likes.get(req.user.id);
 
         return {
             id: post.id,
             description: post.description,
             picture: post.picture,
             likes: post.likes,
+            isLiked,
             comments: post.comments,
             createdAt: post.createdAt,
             updatedAt: post.updatedAt,
@@ -43,23 +46,38 @@ exports.createPost = catchAsyncErrors(async (req, res, next) => {
     })
 });
 
+
 // get a specific post
 exports.getPost = catchAsyncErrors(async (req, res, next) => {
     const id = req.params.id;
 
-    const post = await Post.findById(id);
+    const post = await (await Post.findById(id)).populate('comments');
     if (!post) {
-        return next(new ErrorHandler("Post not found."))
+        return next(new ErrorHandler("Post not found.", 404))
     }
 
+    // get user details of comments
+    const formattedComments = await Promise.all(post.comments.map(async (comment) => {
+        const commentsuser = await getUserDetails(comment.user, req);
+
+        return {
+            user: commentsuser,
+            id: comment.id,
+            comment: comment.comment,
+            post: comment.post
+        }
+    }));
+
     const user = await getUserDetails(post.user, req);
+    const isLiked = post.likes.get(req.user.id);
 
     const formattedPost = {
         id: post.id,
         description: post.description,
         picture: post.picture,
         likes: post.likes,
-        comments: post.comments,
+        isLiked,
+        comments: formattedComments,
         createdAt: post.createdAt,
         updatedAt: post.updatedAt,
         user
@@ -78,12 +96,14 @@ exports.getFeedPosts = catchAsyncErrors(async (req, res, next) => {
     // all posts with user details
     const formattedAllPosts = await Promise.all(allposts.map(async (post) => {
         const user = await getUserDetails(post.user, req);
+        const isLiked = post.likes.get(req.user.id);
 
         return {
             id: post.id,
             description: post.description,
             picture: post.picture,
             likes: post.likes,
+            isLiked,
             comments: post.comments,
             createdAt: post.createdAt,
             updatedAt: post.updatedAt,
@@ -107,12 +127,14 @@ exports.getOwnPosts = catchAsyncErrors(async (req, res, next) => {
     // all user posts with user details
     const formattedAllPosts = await Promise.all(userAllposts.map(async (post) => {
         const user = await getUserDetails(post.user, req);
+        const isLiked = post.likes.get(req.user.id);
 
         return {
             id: post.id,
             description: post.description,
             picture: post.picture,
             likes: post.likes,
+            isLiked,
             comments: post.comments,
             createdAt: post.createdAt,
             updatedAt: post.updatedAt,
@@ -133,7 +155,7 @@ exports.getUserPosts = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findById(id);
 
     if (!user) {
-        return next(new ErrorHandler("User not found."))
+        return next(new ErrorHandler("User not found.", 404))
     }
 
     const userAllposts = await Post.find({
@@ -143,12 +165,14 @@ exports.getUserPosts = catchAsyncErrors(async (req, res, next) => {
     // all user posts with user details
     const formattedAllPosts = await Promise.all(userAllposts.map(async (post) => {
         const postAuthor = await getUserDetails(post.user, req);
+        const isLiked = post.likes.get(req.user.id);
 
         return {
             id: post.id,
             description: post.description,
             picture: post.picture,
             likes: post.likes,
+            isLiked,
             comments: post.comments,
             createdAt: post.createdAt,
             updatedAt: post.updatedAt,
@@ -169,19 +193,46 @@ exports.likepost = catchAsyncErrors(async (req, res, next) => {
     const userId = req.user.id;
 
     const post = await Post.findById(postId);
-    const isLiked = post.likes.get(userId);
+    let isLiked = post.likes.get(userId);
 
     if (isLiked) {
         return next(new ErrorHandler("You already liked this post", 400));
     }
 
     post.likes.set(userId, true);
-
     await post.save();
+
+    // get user details of comments
+    const formattedComments = await Promise.all(post.comments.map(async (comment) => {
+        const commentsuser = await getUserDetails(comment.user, req);
+
+        return {
+            user: commentsuser,
+            id: comment.id,
+            comment: comment.comment,
+            post: comment.post
+        }
+    }));
+
+    const user = await getUserDetails(post.user, req);
+    isLiked = post.likes.get(req.user.id);
+
+    const formattedPost = {
+        id: post.id,
+        description: post.description,
+        picture: post.picture,
+        likes: post.likes,
+        isLiked,
+        comments: formattedComments,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+        user
+    }
+
 
     res.status(200).json({
         success: true,
-        post
+        post: formattedPost
     })
 });
 
@@ -191,19 +242,46 @@ exports.unLikePost = catchAsyncErrors(async (req, res, next) => {
     const userId = req.user.id;
 
     const post = await Post.findById(postId);
-    const isLiked = post.likes.get(userId);
+    let isLiked = post.likes.get(userId);
 
     if (!isLiked) {
         return next(new ErrorHandler("You didn't like this post", 400));
     }
 
     post.likes.delete(userId, true);
-
     await post.save();
+
+    // get user details of comments
+    const formattedComments = await Promise.all(post.comments.map(async (comment) => {
+        const commentsuser = await getUserDetails(comment.user, req);
+
+        return {
+            user: commentsuser,
+            id: comment.id,
+            comment: comment.comment,
+            post: comment.post
+        }
+    }));
+
+    const user = await getUserDetails(post.user, req);
+    isLiked = post.likes.get(req.user.id);
+
+    const formattedPost = {
+        id: post.id,
+        description: post.description,
+        picture: post.picture,
+        likes: post.likes,
+        isLiked,
+        comments: formattedComments,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+        user
+    }
+
 
     res.status(200).json({
         success: true,
-        post
+        post: formattedPost
     })
 });
 
@@ -213,7 +291,7 @@ exports.deletePost = catchAsyncErrors(async (req, res, next) => {
 
     const post = await Post.findById(postId);
     if (!post) {
-        return next(new ErrorHandler("Post not found."))
+        return next(new ErrorHandler("Post not found.", 404))
     }
 
     const isOwner = post.user.toString() === req.user.id;
@@ -222,7 +300,11 @@ exports.deletePost = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("You didn't create this post."))
     }
 
+
     await post.delete();
+    await Comment.findOneAndRemove({
+        post: postId
+    })
 
     res.status(200).json({
         success: true,
