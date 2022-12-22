@@ -7,11 +7,15 @@ const sendToken = require("../utils/sendToken");
 
 // Register new user
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
-    const { name, email, password, avatar, location, occupation } = req.body;
-
+    if (!req.files.avatar) {
+        return next(new ErrorHandler("Please upload valid avatar.", 400))
+    }
     // add cloudinary later
 
-    const user = await User.create({ name, email, password, avatar, location, occupation });
+    const { name, email, password, location, occupation } = req.body;
+
+
+    const user = await User.create({ name, email, password, location, occupation });
 
     await sendToken(user, 201, res);
 });
@@ -115,9 +119,9 @@ exports.addFriend = catchAsyncErrors(async (req, res, next) => {
 
     await user.save();
     await friend.save();
-    
+
     const friends = await getFriendList(user);
-    
+
     // feed posts
     const posts = await getFeedPosts(req);
 

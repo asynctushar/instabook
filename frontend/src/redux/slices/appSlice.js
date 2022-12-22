@@ -10,6 +10,9 @@ const appSlice = createSlice({
     reducers: {
         setMode: (state) => {
             state.mode = state.mode === 'light' ? 'dark' : 'light';
+        },
+        setError: (state, action) => {
+            state.error = action.payload;
         }
     }
 });

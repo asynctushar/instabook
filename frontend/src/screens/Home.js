@@ -1,8 +1,11 @@
-import Navbar from '../components/NavBar';
+import { Fragment } from 'react';
 
 const Home = () => {
     return (
-        <Navbar />
+        <Fragment>
+            
+        </Fragment>
+
     )
 }
 export default Home;
