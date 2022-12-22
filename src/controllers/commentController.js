@@ -2,7 +2,7 @@ const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 const Comment = require('../models/Comments');
 const Post = require('../models/Post');
 const ErrorHandler = require('../utils/errorHandler');
-const getUserDetails = require('../utils/getUserDetails');
+const getPost = require('../utils/getPost');
 
 // create comment in a post
 exports.createComment = catchAsyncErrors(async (req, res, next) => {
@@ -24,31 +24,7 @@ exports.createComment = catchAsyncErrors(async (req, res, next) => {
     await post.save();
     await post.populate('comments');
 
-    // get user details of comments
-    const formattedComments = await Promise.all(post.comments.map(async (comment) => {
-        const commentsuser = await getUserDetails(comment.user, req);
-
-        return {
-            user: commentsuser,
-            id: comment.id,
-            comment: comment.comment,
-            post: comment.post
-        }
-    }));
-
-
-    const user = await getUserDetails(post.user, req);
-    const formattedPost = {
-        id: post.id,
-        description: post.description,
-        picture: post.picture,
-        likes: post.likes,
-        comments: formattedComments,
-        createdAt: post.createdAt,
-        updatedAt: post.updatedAt,
-        user
-    }
-
+    const formattedPost = await getPost(post, req);
 
     res.status(201).json({
         success: true,

@@ -1,6 +1,7 @@
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const User = require("../models/User");
 const ErrorHandler = require("../utils/errorHandler");
+const getFeedPosts = require("../utils/getFeedPosts");
 const getFriendList = require("../utils/getFriendList");
 const sendToken = require("../utils/sendToken");
 
@@ -89,6 +90,8 @@ exports.logoutUser = catchAsyncErrors(async (req, res, next) => {
     })
 });
 
+// need to update on user posts and user details
+// need to update on a post
 // Add friend 
 exports.addFriend = catchAsyncErrors(async (req, res, next) => {
     const id = req.params.id;
@@ -114,14 +117,20 @@ exports.addFriend = catchAsyncErrors(async (req, res, next) => {
     await friend.save();
     
     const friends = await getFriendList(user);
+    
+    // feed posts
+    const posts = await getFeedPosts(req);
 
     res.status(200).json({
         success: true,
         friends,
+        posts,
         message: "User added to your friend list."
     })
 })
 
+// need to update on user posts and user details
+// need to update on a post
 // Remove a friend
 exports.removeFriend = catchAsyncErrors(async (req, res, next) => {
     const id = req.params.id;
@@ -147,11 +156,14 @@ exports.removeFriend = catchAsyncErrors(async (req, res, next) => {
     await friend.save();
 
     const friends = await getFriendList(user);
+    // feed posts
+    const posts = await getFeedPosts(req);
 
     res.status(400).json({
         success: true,
         friends,
-        message: "User removed from your friend list."
+        message: "User removed from your friend list.",
+        posts
     })
 
 });

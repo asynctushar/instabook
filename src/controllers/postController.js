@@ -4,6 +4,8 @@ const Comment = require('../models/Comments');
 const getUserDetails = require('../utils/getUserDetails');
 const ErrorHandler = require('../utils/errorHandler');
 const User = require('../models/User');
+const getFeedPosts = require('../utils/getFeedPosts');
+const getPost = require('../utils/getPost');
 
 // create a post
 exports.createPost = catchAsyncErrors(async (req, res, next) => {
@@ -17,32 +19,13 @@ exports.createPost = catchAsyncErrors(async (req, res, next) => {
         likes: {}
     })
 
-    const allposts = await Post.find();
-
-
-    // all posts with user details
-    const formattedAllPosts = await Promise.all(allposts.map(async (post) => {
-        const user = await getUserDetails(post.user, req);
-        const isLiked = post.likes.get(req.user.id);
-
-        return {
-            id: post.id,
-            description: post.description,
-            picture: post.picture,
-            likes: post.likes,
-            isLiked,
-            comments: post.comments,
-            createdAt: post.createdAt,
-            updatedAt: post.updatedAt,
-            user: user
-        }
-    }));
+    const posts = await getFeedPosts(req);
 
     res.status(201).json({
         success: true,
         message: "Post created successfully.",
-        postCount: allposts.length,
-        posts: formattedAllPosts.reverse()
+        postCount: posts.length,
+        posts
     })
 });
 
@@ -56,32 +39,7 @@ exports.getPost = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Post not found.", 404))
     }
 
-    // get user details of comments
-    const formattedComments = await Promise.all(post.comments.map(async (comment) => {
-        const commentsuser = await getUserDetails(comment.user, req);
-
-        return {
-            user: commentsuser,
-            id: comment.id,
-            comment: comment.comment,
-            post: comment.post
-        }
-    }));
-
-    const user = await getUserDetails(post.user, req);
-    const isLiked = post.likes.get(req.user.id);
-
-    const formattedPost = {
-        id: post.id,
-        description: post.description,
-        picture: post.picture,
-        likes: post.likes,
-        isLiked,
-        comments: formattedComments,
-        createdAt: post.createdAt,
-        updatedAt: post.updatedAt,
-        user
-    }
+    const formattedPost = await getPost(post, req);
 
     res.status(200).json({
         success: true,
@@ -91,30 +49,12 @@ exports.getPost = catchAsyncErrors(async (req, res, next) => {
 
 // get all post at feed
 exports.getFeedPosts = catchAsyncErrors(async (req, res, next) => {
-    const allposts = await Post.find();
-
-    // all posts with user details
-    const formattedAllPosts = await Promise.all(allposts.map(async (post) => {
-        const user = await getUserDetails(post.user, req);
-        const isLiked = post.likes.get(req.user.id);
-
-        return {
-            id: post.id,
-            description: post.description,
-            picture: post.picture,
-            likes: post.likes,
-            isLiked,
-            comments: post.comments,
-            createdAt: post.createdAt,
-            updatedAt: post.updatedAt,
-            user: user
-        }
-    }));
+    const posts = await getFeedPosts(req);
 
     res.status(201).json({
         success: true,
-        postCount: allposts.length,
-        posts: formattedAllPosts.reverse()
+        postCount: posts.length,
+        posts
     })
 });
 
@@ -125,7 +65,7 @@ exports.getOwnPosts = catchAsyncErrors(async (req, res, next) => {
     });
 
     // all user posts with user details
-    const formattedAllPosts = await Promise.all(userAllposts.map(async (post) => {
+    const formattedUserAllPosts = await Promise.all(userAllposts.map(async (post) => {
         const user = await getUserDetails(post.user, req);
         const isLiked = post.likes.get(req.user.id);
 
@@ -145,9 +85,10 @@ exports.getOwnPosts = catchAsyncErrors(async (req, res, next) => {
     res.status(201).json({
         success: true,
         postCount: userAllposts.length,
-        posts: formattedAllPosts.reverse()
+        posts: formattedUserAllPosts.reverse()
     })
 })
+
 
 // get user posts
 exports.getUserPosts = catchAsyncErrors(async (req, res, next) => {
@@ -163,7 +104,7 @@ exports.getUserPosts = catchAsyncErrors(async (req, res, next) => {
     })
 
     // all user posts with user details
-    const formattedAllPosts = await Promise.all(userAllposts.map(async (post) => {
+    const formattedUserAllPosts = await Promise.all(userAllposts.map(async (post) => {
         const postAuthor = await getUserDetails(post.user, req);
         const isLiked = post.likes.get(req.user.id);
 
@@ -183,10 +124,11 @@ exports.getUserPosts = catchAsyncErrors(async (req, res, next) => {
     res.status(201).json({
         success: true,
         postCount: userAllposts.length,
-        posts: formattedAllPosts.reverse()
+        posts: formattedUserAllPosts.reverse()
     })
 });
 
+// need to update  on useposts ands own posts if so
 // Like post
 exports.likepost = catchAsyncErrors(async (req, res, next) => {
     const postId = req.params.id;
@@ -202,47 +144,26 @@ exports.likepost = catchAsyncErrors(async (req, res, next) => {
     post.likes.set(userId, true);
     await post.save();
 
-    // get user details of comments
-    const formattedComments = await Promise.all(post.comments.map(async (comment) => {
-        const commentsuser = await getUserDetails(comment.user, req);
 
-        return {
-            user: commentsuser,
-            id: comment.id,
-            comment: comment.comment,
-            post: comment.post
-        }
-    }));
-
-    const user = await getUserDetails(post.user, req);
-    isLiked = post.likes.get(req.user.id);
-
-    const formattedPost = {
-        id: post.id,
-        description: post.description,
-        picture: post.picture,
-        likes: post.likes,
-        isLiked,
-        comments: formattedComments,
-        createdAt: post.createdAt,
-        updatedAt: post.updatedAt,
-        user
-    }
-
+    // specific post and feed post
+    const formattedPost = await getPost(post, req);
+    const posts = await getFeedPosts(req);
 
     res.status(200).json({
         success: true,
-        post: formattedPost
+        post: formattedPost,
+        posts
     })
 });
 
+// need to update on user posts and own posts if so
 // UnLike post 
 exports.unLikePost = catchAsyncErrors(async (req, res, next) => {
     const postId = req.params.id;
     const userId = req.user.id;
 
     const post = await Post.findById(postId);
-    let isLiked = post.likes.get(userId);
+    const isLiked = post.likes.get(userId);
 
     if (!isLiked) {
         return next(new ErrorHandler("You didn't like this post", 400));
@@ -251,37 +172,15 @@ exports.unLikePost = catchAsyncErrors(async (req, res, next) => {
     post.likes.delete(userId, true);
     await post.save();
 
-    // get user details of comments
-    const formattedComments = await Promise.all(post.comments.map(async (comment) => {
-        const commentsuser = await getUserDetails(comment.user, req);
 
-        return {
-            user: commentsuser,
-            id: comment.id,
-            comment: comment.comment,
-            post: comment.post
-        }
-    }));
-
-    const user = await getUserDetails(post.user, req);
-    isLiked = post.likes.get(req.user.id);
-
-    const formattedPost = {
-        id: post.id,
-        description: post.description,
-        picture: post.picture,
-        likes: post.likes,
-        isLiked,
-        comments: formattedComments,
-        createdAt: post.createdAt,
-        updatedAt: post.updatedAt,
-        user
-    }
-
+    // specific post and feed posts 
+    const formattedPost = await getPost(post, req);
+    const posts = await getFeedPosts(req);
 
     res.status(200).json({
         success: true,
-        post: formattedPost
+        post: formattedPost,
+        posts
     })
 });
 
