@@ -16,12 +16,10 @@ const postSchema = new mongoose.Schema({
     },
     picture: {
         public_id: {
-            type: String,
-            default: "not uploaded"
+            type: String
         },
         url: {
-            type: String,
-            default: "not uploaded"
+            type: String
         }
     },
     likes: {

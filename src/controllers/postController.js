@@ -6,19 +6,39 @@ const ErrorHandler = require('../utils/errorHandler');
 const User = require('../models/User');
 const getFeedPosts = require('../utils/getFeedPosts');
 const getPost = require('../utils/getPost');
+const cloudinary = require('cloudinary').v2;
+const fs = require('fs');
 
 // create a post
 exports.createPost = catchAsyncErrors(async (req, res, next) => {
-    const { description, picture, } = req.body;
+    const { description } = req.body;
+    let picture = req.file;
 
-    // add cloudinary later
-
-    await Post.create({
+    const post = await Post.create({
         user: req.user.id,
         description,
         likes: {}
-    })
+    });
 
+    // add cloudinary later
+    if (picture) {
+        const myCloud = await cloudinary.uploader.upload(picture.path, {
+            folder: '/instabook/pictures',
+            width: 800,
+            height: 1200,
+            crop: "scale",
+        });
+
+        // removing temp image file
+        fs.rm(picture.path, { recursive: true }, (err) => { });
+
+        post.picture = {
+            public_id: myCloud.public_id,
+            url: myCloud.secure_url
+        }
+    }
+
+    await post.save();
     const posts = await getFeedPosts(req);
 
     res.status(201).json({
@@ -199,6 +219,9 @@ exports.deletePost = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("You didn't create this post."))
     }
 
+    if (post.picture.public_id) {
+        await cloudinary.uploader.destroy(post.picture.public_id);
+    }
 
     await post.delete();
     await Comment.findOneAndRemove({

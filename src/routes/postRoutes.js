@@ -1,10 +1,11 @@
 const express = require('express');
 const { isAuthenticatedUser } = require('../middlewares/auth');
+const imageUpload = require('../middlewares/imageUpload');
 const { createPost, getPost, getFeedPosts, getOwnPosts, getUserPosts, likepost, unLikePost, deletePost } = require('../controllers/postController');
 
 const router = express.Router();
 
-router.route('/post/create').post(isAuthenticatedUser, createPost);
+router.route('/post/create').post(isAuthenticatedUser, imageUpload('picture'), createPost);
 router.route('/post/:id').get(isAuthenticatedUser, getPost);
 router.route('/post/:id/like').put(isAuthenticatedUser, likepost);
 router.route('/post/:id/unlike').put(isAuthenticatedUser, unLikePost);

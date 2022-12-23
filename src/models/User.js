@@ -33,12 +33,10 @@ const userSchema = new mongoose.Schema({
     ],
     avatar: {
         public_id: {
-            type: String,
-            default: "not uploaded"
+            type: String
         },
         url: {
-            type: String,
-            default: "not uploaded"
+            type: String
         }
     },
     location: {

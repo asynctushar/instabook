@@ -1,5 +1,6 @@
 const app = require('./app.js');
 const databaseConnect = require('../config/db.js');
+const cloudinary = require('cloudinary').v2;
 
 const port = process.env.PORT;
 
@@ -13,6 +14,13 @@ process.on('uncaughtException', (err) => {
 
 // connect database
 databaseConnect();
+
+// cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+})
 
 const server = app.listen(port, () => {
     console.log(`Server started at port:${port}`);

@@ -56,6 +56,9 @@ const NavBar = () => {
                     {isAuthenticated &&
                         <FormControl variant="standard" value={user.name} >
                             <Select value={user.name}
+                                MenuProps={{
+                                    disableScrollLock: true,
+                                }}
                                 sx={{
                                     backgroundColor: neutralLight, width: '150px', borderRadius: ".25rem", p: ".25rem 1rem",
                                     ".MuiSvgIcon-root": {
@@ -90,54 +93,57 @@ const NavBar = () => {
                         {!isMobileMenuToggle ? < Menu /> : <Close />}
                     </IconButton>
                     {isMobileScreen && isMobileMenuToggle && (
-                            <Box position="absolute" top="80px" right="0" height="auto" zIndex="10" maxWidth="500px" minWidth="300px" pb="2rem" backgroundColor={alt}>
-                                {/* mobile menu items */}
-                                <FlexBetween flexDirection="column" justifyContent="center" gap="3rem" >
-                                    <IconButton onClick={() => {
-                                        dispatch(changeMode());
-                                        setIsMobileMenuToggle(false);
-                                    }
-                                    } >
-                                        {theme.palette.mode === "dark" ? (
-                                            <DarkMode sx={{ fontSize: "25px" }} />
-                                        ) : (
-                                            <LightMode sx={{ color: dark, fontSize: "25px" }} />
-                                        )}
-                                    </IconButton>
-                                    <Message sx={{ fontSize: "25px" }} />
-                                    <Notifications sx={{ fontSize: "25px" }} />
-                                    <Help sx={{ fontSize: "25px" }} />
-                                    {isAuthenticated &&
-                                        <FormControl variant="standard" value={user.name} >
-                                            <Select value={user.name}
-                                                sx={{
-                                                    backgroundColor: neutralLight, width: '150px', borderRadius: ".25rem", p: ".25rem 1rem",
-                                                    ".MuiSvgIcon-root": {
-                                                        pr: '.25rem',
-                                                        width: '3rem'
-                                                    },
-                                                    ".MuiSelect-select:focus": {
-                                                        backgroundColor: neutralLight
-                                                    }
-                                                }}
-                                                input={<InputBase />}
-                                            >
-                                                <MenuItem value={user.name}>
-                                                    <Typography >
-                                                        {user.name}
-                                                    </Typography>
-                                                </MenuItem>
-                                                <MenuItem onClick={() => {
-                                                    dispatch(logOutUser());
-                                                    setIsMobileMenuToggle(false);
-                                                }}>
-                                                    Log Out
-                                                </MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                    }
-                                </FlexBetween>
-                            </Box>
+                        <Box position="absolute" top="80px" right="0" height="auto" zIndex="2" maxWidth="500px" minWidth="300px" pb="2rem" backgroundColor={alt}>
+                            {/* mobile menu items */}
+                            <FlexBetween flexDirection="column" justifyContent="center" gap="3rem" >
+                                <IconButton onClick={() => {
+                                    dispatch(changeMode());
+                                    setIsMobileMenuToggle(false);
+                                }
+                                } >
+                                    {theme.palette.mode === "dark" ? (
+                                        <DarkMode sx={{ fontSize: "25px" }} />
+                                    ) : (
+                                        <LightMode sx={{ color: dark, fontSize: "25px" }} />
+                                    )}
+                                </IconButton>
+                                <Message sx={{ fontSize: "25px" }} />
+                                <Notifications sx={{ fontSize: "25px" }} />
+                                <Help sx={{ fontSize: "25px" }} />
+                                {isAuthenticated &&
+                                    <FormControl variant="standard" value={user.name} >
+                                        <Select value={user.name}
+                                            MenuProps={{
+                                                disableScrollLock: true,
+                                            }}
+                                            sx={{
+                                                backgroundColor: neutralLight, width: '150px', borderRadius: ".25rem", p: ".25rem 1rem",
+                                                ".MuiSvgIcon-root": {
+                                                    pr: '.25rem',
+                                                    width: '3rem'
+                                                },
+                                                ".MuiSelect-select:focus": {
+                                                    backgroundColor: neutralLight
+                                                }
+                                            }}
+                                            input={<InputBase />}
+                                        >
+                                            <MenuItem value={user.name}>
+                                                <Typography >
+                                                    {user.name}
+                                                </Typography>
+                                            </MenuItem>
+                                            <MenuItem onClick={() => {
+                                                dispatch(logOutUser());
+                                                setIsMobileMenuToggle(false);
+                                            }}>
+                                                Log Out
+                                            </MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                }
+                            </FlexBetween>
+                        </Box>
                     )}
                 </Fragment>
             )

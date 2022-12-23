@@ -1,7 +1,5 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
-const bb = require('express-busboy');
-const path = require('path');
 
 // environment setup before routes
 if (process.env.NODE_ENV != "PRODUCTION") {
@@ -18,15 +16,6 @@ const app = express();
 
 app.use(express.json({ limit: "60mb" }));
 app.use(express.urlencoded({ extended: true, limit: "60mb" }));
-bb.extend(app, {
-    upload: true,
-    mimeTypeLimit : [
-        'text/x-markdown',
-        'application/javascript',
-        'image/jpeg',
-        'image/png'
-    ]
-});
 app.use(cookieParser());
 
 app.use('/api/v1', userRoutes);

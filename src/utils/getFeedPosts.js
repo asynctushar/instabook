@@ -1,4 +1,5 @@
 const Post = require("../models/Post");
+const getUserDetails = require('../utils/getUserDetails');
 
 const getFeedPosts = async (req) => {
     const allposts = await Post.find();

@@ -1,4 +1,4 @@
-import { Box, Typography, useMediaQuery, useTheme, TextField, Button } from '@mui/material';
+import { Box, Typography, useMediaQuery, useTheme, TextField, Input, Button } from '@mui/material';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { Fragment, useEffect, useState } from 'react';
@@ -73,7 +73,6 @@ const LogIn = () => {
                 Welcome to Instabook
             </Typography>
             <Formik onSubmit={submitHandler}
-                // initialValues={ pageType === "login" ? initialValuesLogin : initialValuesRegister}
                 initialValues={initialValues}
                 validationSchema={pageType === "login" ? loginSchema : registerSchema}
 
@@ -124,7 +123,7 @@ const LogIn = () => {
                                         error={Boolean(touched.occupation) && Boolean(errors.occupation)}
                                         helperText={touched.occupation && errors.occupation}
                                     />
-                                    <Box border={`1px solid ${theme.palette.neutral.medium}`} borderRadius="5px" p="1rem" gridColumn="span 4!important">
+                                    <Box border={`1px solid ${Boolean(touched.avatar) && errors.avatar ? "#d32f2f" : theme.palette.neutral.medium}`} borderRadius="5px" p="1rem" gridColumn="span 4!important">
                                         <Dropzone
                                             acceptedFiles=".jpg, .jpeg, .png" multiple={false}
                                             onDrop={(acceptedFiles) => setFieldValue("avatar", acceptedFiles[0])}>
@@ -144,6 +143,7 @@ const LogIn = () => {
                                                 </Box>
                                             )}
                                         </Dropzone>
+                                        {Boolean(touched.occupation) && errors.avatar && <Typography color="#d32f2f" fontSize="0.6428571428571428rem" mt="2px">{errors.avatar}</Typography>}
                                     </Box>
                                 </Fragment>
                             )}

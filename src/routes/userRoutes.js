@@ -1,10 +1,11 @@
 const express = require('express');
 const { registerUser, loginUser, getOwnUserDetails, getUserDetails, logoutUser, addFriend, removeFriend, getFriendList } = require('../controllers/userController');
 const { isAuthenticatedUser } = require('../middlewares/auth');
+const imageUpload = require('../middlewares/imageUpload');
 
 const router = express.Router();
 
-router.route('/register').post(registerUser);
+router.route('/register').post(imageUpload('avatar'),registerUser);
 router.route('/login').post(loginUser);
 router.route('/logout').get(isAuthenticatedUser, logoutUser);
 router.route('/me').get(isAuthenticatedUser, getOwnUserDetails);

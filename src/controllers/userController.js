@@ -4,19 +4,38 @@ const ErrorHandler = require("../utils/errorHandler");
 const getFeedPosts = require("../utils/getFeedPosts");
 const getFriendList = require("../utils/getFriendList");
 const sendToken = require("../utils/sendToken");
+const cloudinary = require('cloudinary').v2;
+const fs = require('fs');
+
 
 // Register new user
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
-    if (!req.files.avatar) {
-        return next(new ErrorHandler("Please upload valid avatar.", 400))
-    }
-    // add cloudinary later
-
     const { name, email, password, location, occupation } = req.body;
+    const avatar = req.file;
 
+    if (!avatar) {
+        return next(new ErrorHandler("Please upload avatar.", 400));
+    }
 
-    const user = await User.create({ name, email, password, location, occupation });
+    const user = await User.create({ name, email, password, location, occupation, avatar });
 
+    // cloudinary
+    const myCloud = await cloudinary.uploader.upload(avatar.path, {
+        folder: '/instabook/avatars',
+        width: 1000,
+        height: 1000,
+        crop: "scale",
+    });
+
+    // removing temp image file
+    fs.rm(avatar.path, { recursive: true }, (err) => { });
+
+    user.avatar = {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url
+    }
+
+    await user.save();
     await sendToken(user, 201, res);
 });
 
