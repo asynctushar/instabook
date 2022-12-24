@@ -33,7 +33,7 @@ const NavBar = () => {
                     Instabook
                 </Typography>
                 {!isMobileScreen && (
-                    <FlexBetween backgroundColor={neutralLight} borderRadius="9px" gap="3rem" padding=".1rem 1.5rem">
+                    <FlexBetween backgroundColor={neutralLight} borderRadius="9px" gap="3rem" padding=".1rem .5rem .1rem 1.5rem">
                         <InputBase placeholder="Search..." />
                         <IconButton>
                             <Search />

@@ -143,7 +143,7 @@ const LogIn = () => {
                                                 </Box>
                                             )}
                                         </Dropzone>
-                                        {Boolean(touched.occupation) && errors.avatar && <Typography color="#d32f2f" fontSize="0.6428571428571428rem" mt="2px">{errors.avatar}</Typography>}
+                                        {Boolean(touched.avatar) && errors.avatar && <Typography color="#d32f2f" fontSize="0.6428571428571428rem" mt="2px">{errors.avatar}</Typography>}
                                     </Box>
                                 </Fragment>
                             )}
