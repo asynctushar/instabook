@@ -1,11 +1,23 @@
-import { Add, ChatBubbleOutlined, FavoriteBorderOutlined, FavoriteOutlined, ShareOutlined } from "@mui/icons-material";
+import { ChatBubbleOutlined, FavoriteBorderOutlined, FavoriteOutlined, ShareOutlined } from "@mui/icons-material";
 import { IconButton, Tooltip, Typography, useTheme } from "@mui/material";
+import { useDispatch } from "react-redux";
 import FlexBetween from "../customs/FlexBetween";
 import WidgetWrapper from "../customs/WidgetWrapper";
+import { likePost, unlikePost } from "../redux/actions/postAction";
 import User from "./User";
 
 const PostWidget = ({ post }) => {
     const { palette } = useTheme();
+    const dispatch = useDispatch();
+    const likeCount = Object.keys(post.likes).length;
+
+    const likeHandler = () => {
+        dispatch(likePost(post.id));
+    }
+
+    const unlikeHandler = () => {
+        dispatch(unlikePost(post.id));
+    }
 
     return (
         <WidgetWrapper m="1rem 0">
@@ -25,18 +37,18 @@ const PostWidget = ({ post }) => {
                     <FlexBetween gap=".3rem" >
                         {post.isLiked ? (
                             <Tooltip title="unlike" >
-                                <IconButton >
+                                <IconButton onClick={unlikeHandler} >
                                     <FavoriteOutlined style={{ fontSize: "1.7rem" }} sx={{ color: palette.primary.main }} />
                                 </IconButton>
                             </Tooltip>
                         ) : (
                             <Tooltip title="like" >
-                                <IconButton >
+                                <IconButton onClick={likeHandler}>
                                     <FavoriteBorderOutlined style={{ fontSize: "1.7rem" }} sx={{ color: palette.primary.main }} />
                                 </IconButton>
                             </Tooltip>
                         )}
-                        <Typography>{127}</Typography>
+                        <Typography>{likeCount}</Typography>
                     </FlexBetween>
                     <FlexBetween gap=".3rem">
                         <Tooltip title="comment" >
@@ -44,7 +56,7 @@ const PostWidget = ({ post }) => {
                                 <ChatBubbleOutlined style={{ fontSize: "1.7rem" }} />
                             </IconButton>
                         </Tooltip>
-                        <Typography>{23}</Typography>
+                        <Typography>{post.comments.length}</Typography>
                     </FlexBetween>
                 </FlexBetween>
                 <Tooltip title="share" >

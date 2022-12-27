@@ -3,11 +3,13 @@ import { ManageAccountsOutlined, Add, Remove } from '@mui/icons-material';
 import FlexBetWeen from '../customs/FlexBetween';
 import UserImage from './UserImage';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { addFriend, removeFriend } from '../redux/actions/userAction';
 
 const User = ({ user, type }) => {
     const ownUser = useSelector(state => state.userState.user);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const theme = useTheme();
 
     const navigateProfile = () => {
@@ -16,6 +18,14 @@ const User = ({ user, type }) => {
         } else {
             navigate(`/user/${user.id}`)
         }
+    }
+
+    const addFriendHandler = () => {
+        dispatch(addFriend(user.id))
+    }
+
+    const removeFriendHandler = () => {
+        dispatch(removeFriend(user.id))
     }
 
     return (
@@ -38,8 +48,8 @@ const User = ({ user, type }) => {
                 </Box>
             </FlexBetWeen>
             {user.isFriend === (undefined) && type === "user" && <ManageAccountsOutlined />}
-            {user.isFriend === false && <IconButton><Add /></IconButton>}
-            {user.isFriend === true && <IconButton><Remove /></IconButton>}
+            {user.isFriend === false && <IconButton onClick={addFriendHandler}><Add /></IconButton>}
+            {user.isFriend === true && <IconButton onClick={removeFriendHandler}><Remove /></IconButton>}
         </FlexBetWeen>
     )
 }

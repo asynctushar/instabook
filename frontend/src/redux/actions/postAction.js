@@ -62,3 +62,25 @@ export const createNewPost = (formData) => async (dispatch) => {
         dispatch(setError(err.response.data.message));
     }
 }
+
+// like a post
+export const likePost = (postId) => async (dispatch) => {
+    try {
+        const { data } = await axios.put(`/api/v1/post/${postId}/like`);
+
+        dispatch(setPosts(data.posts));
+    } catch (err) {
+        dispatch(setError(err.response.data.message));
+    }
+}
+
+// unlike a post
+export const unlikePost = (postId) => async (dispatch) => {
+    try {
+        const { data } = await axios.put(`/api/v1/post/${postId}/unlike`);
+
+        dispatch(setPosts(data.posts));
+    } catch (err) {
+        dispatch(setError(err.response.data.message));
+    }
+}

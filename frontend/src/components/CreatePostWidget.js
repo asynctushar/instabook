@@ -18,6 +18,8 @@ const CreatePostWidget = ({ avatar }) => {
 
 
     const postHandler = () => {
+        if (post.length < 10) return;
+        
         const formData = new FormData();
 
         formData.append("description", post);

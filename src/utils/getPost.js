@@ -1,4 +1,4 @@
-const { getUserDetails } = require("../controllers/userController");
+const getUserDetails = require('./getUserDetails');
 
 const getPost = async (post, req) => {
     // get user details of comments

@@ -6,7 +6,7 @@ const getUserDetails = async (userId, req) => {
     let isFriend = undefined;
 
     // in case of others post
-    if (userId.toString() !== req.user.id) {
+    if (userId.toString() !== req.user._id.toString()) {
         isFriend = req.user.friends.includes(userId);
     }
     const user = await User.findById(userId);

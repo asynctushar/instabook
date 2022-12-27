@@ -1,9 +1,11 @@
 import userSlice from "../slices/userSlice";
 import axios from 'axios';
 import appSlice from "../slices/appSlice";
+import postSlice from '../slices/postSlice';
 
 const { setUser, setLoader, removeUser, setFriend, setSingleUser } = userSlice.actions;
 const { setError } = appSlice.actions;
+const { setPosts } = postSlice.actions;
 
 // get user from cookie
 export const getUser = () => async (dispatch) => {
@@ -68,10 +70,31 @@ export const  getSingleUser = (id) => async (dispatch) => {
     try {
         const { data } = await axios.get(`/api/v1/user/${id}`);
 
-        
         dispatch(setSingleUser(data.user));
     } catch (err) {
         dispatch(setError(err.response.data.message))
     }
-} 
+}
+
+// add friend 
+export const addFriend = (userId) => async (dispatch) => {
+    try {
+        const { data } = await axios.get(`/api/v1/me/friend/add/${userId}`);
+        
+        dispatch(setPosts(data.posts));
+    } catch (err) {
+        dispatch(setError(err.response.data.message));
+    }
+}
+
+// remove friend 
+export const removeFriend = (userId) => async (dispatch) => {
+    try {
+        const { data } = await axios.get(`/api/v1/me/friend/remove/${userId}`);
+        
+        dispatch(setPosts(data.posts));
+    } catch (err) {
+        dispatch(setError(err.response.data.message));
+    }
+}
 

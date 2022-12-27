@@ -152,6 +152,7 @@ exports.likepost = catchAsyncErrors(async (req, res, next) => {
     const postId = req.params.id;
     const userId = req.user.id;
 
+
     const post = await Post.findById(postId);
     let isLiked = post.likes.get(userId);
 
