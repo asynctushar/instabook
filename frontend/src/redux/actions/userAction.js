@@ -2,7 +2,7 @@ import userSlice from "../slices/userSlice";
 import axios from 'axios';
 import appSlice from "../slices/appSlice";
 
-const { setUser, setLoader, removeUser } = userSlice.actions;
+const { setUser, setLoader, removeUser, setFriend, setSingleUser } = userSlice.actions;
 const { setError } = appSlice.actions;
 
 // get user from cookie
@@ -11,7 +11,8 @@ export const getUser = () => async (dispatch) => {
         dispatch(setLoader(true));
         const { data } = await axios.get('/api/v1/me');
 
-        dispatch(setUser(data.user))
+        dispatch(setUser(data.user));
+        dispatch(setFriend(data.friends));
         dispatch(setLoader(false));
     } catch (err) {
         dispatch(setError(err.response.data.message));
@@ -25,6 +26,7 @@ export const registerUser = (formData) => async (dispatch) => {
         dispatch(setLoader(true));
         const { data } = await axios.post('/api/v1/register', formData, { headers: { "Content-Type": "multipart/form-data" } });
         dispatch(setUser(data.user));
+        dispatch(setFriend(data.friends));
         dispatch(setLoader(false));
     } catch (err) {
         dispatch(setError(err.response.data.message));
@@ -39,6 +41,7 @@ export const logInUser = (formData) => async (dispatch) => {
         const { data } = await axios.post('/api/v1/login', formData, { headers: { "Content-Type": "application/json" } });
 
         dispatch(setUser(data.user));
+        dispatch(setFriend(data.friends));
         dispatch(setLoader(false));
     } catch (err) {
         dispatch(setError(err.response.data.message));
@@ -59,4 +62,16 @@ export const logOutUser = () => async (dispatch) => {
         dispatch(setLoader(false));
     }
 }
+
+// get single user 
+export const  getSingleUser = (id) => async (dispatch) => {
+    try {
+        const { data } = await axios.get(`/api/v1/user/${id}`);
+
+        
+        dispatch(setSingleUser(data.user));
+    } catch (err) {
+        dispatch(setError(err.response.data.message))
+    }
+} 
 

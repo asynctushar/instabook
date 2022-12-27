@@ -62,13 +62,8 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
 
 // get own user details
 exports.getOwnUserDetails = catchAsyncErrors(async (req, res, next) => {
-    const friends = await getFriendList(req.user);
 
-    res.status(200).json({
-        success: true,
-        user: req.user,
-        friends
-    })
+    await sendToken(req.user, 200, res);
 })
 
 // get others user details

@@ -6,11 +6,13 @@ const getFriendList = async (user) => {
             id: friend.id,
             name: friend.name,
             avatar: friend.avatar,
-            isFriend: true
+            isFriend: true,
+            location: friend.location,
+            occupation: friend.occupation
         }
     })
 
-    return formattedFriends
+    return formattedFriends;
 }
 
 module.exports = getFriendList;

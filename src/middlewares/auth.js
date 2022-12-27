@@ -15,7 +15,7 @@ const isAuthenticatedUser = catchAsyncErrors(async (req, res, next) => {
     if (!user) {
         return next(new ErrorHandler("Please Login to access this resource.", 401))
     }
-
+    
     req.user = user;
     next();
 });

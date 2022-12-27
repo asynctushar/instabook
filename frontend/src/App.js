@@ -11,6 +11,8 @@ import { getUser } from './redux/actions/userAction';
 import Loader from './components/Loader';
 import NavBar from './components/NavBar';
 import ProtectedRoute from './customs/ProtectedRoute';
+import Profile from './screens/Profile';
+import UserProfile from './screens/UserProfile';
 
 const App = () => {
     const { mode } = useSelector((state) => state.appState);
@@ -29,14 +31,24 @@ const App = () => {
                 <NavBar />
                 {isLoading ? <Loader /> : (
                     <div className="app">
-                            <Routes>
-                                <Route path="/" element={ 
-                                    <ProtectedRoute >
-                                        <Home />
-                                    </ProtectedRoute>
-                                } />
-                                <Route path="/login" element={<LogIn />} />
-                            </Routes>
+                        <Routes>
+                            <Route path="/" element={
+                                <ProtectedRoute >
+                                    <Home />
+                                </ProtectedRoute>
+                            } />
+                            <Route path="/me" element={
+                                <ProtectedRoute >
+                                    <Profile />
+                                </ProtectedRoute>
+                            } />
+                            <Route path="/user/:id" element={
+                                <ProtectedRoute >
+                                    <UserProfile />
+                                </ProtectedRoute>
+                            } />
+                            <Route path="/login" element={<LogIn />} />
+                        </Routes>
                     </div>
                 )}
             </ThemeProvider>

@@ -9,7 +9,7 @@ const UserWidget = ({ user }) => {
 
     return (
         <WidgetWrapper >
-            <User user={user} />
+            <User user={user} type="user" />
             <Divider sx={{ mt: '1.2rem' }} />
             <Box p="1rem 0">
                 <Box display="flex" alignItems="center" gap="1rem" mb=".5rem" >

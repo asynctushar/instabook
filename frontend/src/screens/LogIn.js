@@ -172,6 +172,7 @@ const LogIn = () => {
                         </Box>
                         <Box width="100%">
                             <Button type="submit"
+                                variant="contained"
                                 sx={{
                                     m: "2rem auto",
                                     p: "1rem",
@@ -179,9 +180,6 @@ const LogIn = () => {
                                     width: "60%",
                                     backgroundColor: theme.palette.primary.main,
                                     color: theme.palette.background.alt,
-                                    ":hover": {
-                                        color: theme.palette.primary.main
-                                    }
                                 }}>
                                 {pageType === "login" ? "Log In" : "Register"}
                             </Button>

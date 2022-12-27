@@ -24,8 +24,6 @@ exports.createPost = catchAsyncErrors(async (req, res, next) => {
     if (picture) {
         const myCloud = await cloudinary.uploader.upload(picture.path, {
             folder: '/instabook/pictures',
-            width: 800,
-            height: 1200,
             crop: "scale",
         });
 

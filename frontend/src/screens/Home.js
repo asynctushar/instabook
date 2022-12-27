@@ -1,25 +1,51 @@
 import { useMediaQuery, Box } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import AdWidget from '../components/AdWidget';
 import CreatePostWidget from '../components/CreatePostWidget';
+import Loader from '../components/Loader';
+import PostWidget from '../components/PostWidget';
 import UserWidget from '../components/UserWidget';
+import FriendListWidget from '../components/FriendListWidget';
+import { useNavigate } from 'react-router-dom';
+import { getAllFeedPosts } from '../redux/actions/postAction';
 
 const Home = () => {
+    const dispath = useDispatch();
     const isMobileScreen = useMediaQuery("(max-width: 980px)");
-    const { user } = useSelector(state => state.userState)
+    const { user, friends, isAuthenticated } = useSelector(state => state.userState);
+    const navigate = useNavigate();
+    const { posts, isLoading } = useSelector(state => state.postState);
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login');
+        }
+
+        dispath(getAllFeedPosts());
+    }, [dispath, isAuthenticated, navigate])
+
     return (
-        <Box>
-            <Box width="100%" padding="2rem 6%" gap=".5rem" justifyContent="space-between" display={isMobileScreen ? "block" : "flex"}>
+        <Box width="100%" padding="2rem 6%" gap="2rem" justifyContent="space-between" display={isMobileScreen ? "block" : "flex"}>
+            {!isMobileScreen && (
                 <Box flexBasis={isMobileScreen ? undefined : "26%"}>
                     <UserWidget user={user} />
                 </Box>
-                <Box flexBasis={isMobileScreen ? undefined : "42%"} mt={isMobileScreen ? "2rem" : undefined}>
-                    <CreatePostWidget avatar={user.avatar} />
-                </Box>
-                {!isMobileScreen && (
-                    <Box flexBasis={isMobileScreen ? undefined : "26%"}>
-                    </Box>
-                )}
+            )}
+
+            <Box width={isMobileScreen ? undefined : "42%"}>
+                <CreatePostWidget avatar={user.avatar} />
+                {isLoading ? <Loader /> : posts.map(post => (
+                    <PostWidget post={post} key={post.id} />
+                ))}
             </Box>
+
+            {!isMobileScreen && (
+                <Box flexBasis={isMobileScreen ? undefined : "26%"}>
+                    <AdWidget />
+                    <FriendListWidget friends={friends} />
+                </Box>
+            )}
         </Box>
 
     )

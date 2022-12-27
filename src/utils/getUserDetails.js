@@ -3,7 +3,7 @@ const User = require("../models/User")
 const getUserDetails = async (userId, req) => {
 
     // in case of own post
-    let isFriend = null;
+    let isFriend = undefined;
 
     // in case of others post
     if (userId.toString() !== req.user.id) {
@@ -15,7 +15,9 @@ const getUserDetails = async (userId, req) => {
         id: user.id,
         name: user.name,
         isFriend,
-        avatar: user.avatar
+        avatar: user.avatar,
+        location: user.location,
+        occupation: user.occupation
     }
 }
 

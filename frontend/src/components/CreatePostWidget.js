@@ -4,44 +4,65 @@ import FlexBetween from "../customs/FlexBetween";
 import WidgetWrapper from "../customs/WidgetWrapper";
 import UserImage from "./UserImage";
 import Dropzone from 'react-dropzone';
+import { useDispatch } from "react-redux";
 import { DeleteOutline, EditOutlined, ImageOutlined, GifBoxOutlined, AttachFileOutlined, MicOutlined, MoreHorizOutlined } from "@mui/icons-material";
+import { createNewPost } from "../redux/actions/postAction";
 
 const CreatePostWidget = ({ avatar }) => {
-    const [image, setImage] = useState(false)
+    const [image, setImage] = useState(null);
+    const [post, setPost] = useState('');
+    const [isImage, setIsImage] = useState(false);
     const isMobileScreen = useMediaQuery('(max-width: 980px)');
     const { palette } = useTheme();
+    const dispatch = useDispatch();
+
+
+    const postHandler = () => {
+        const formData = new FormData();
+
+        formData.append("description", post);
+        formData.append("picture", image);
+
+        dispatch(createNewPost(formData));
+
+        setImage(null);
+        setIsImage(false);
+        setPost('');
+    }
+
     return (
         <WidgetWrapper>
             <FlexBetween gap="1.5rem">
                 <UserImage avatar={avatar} />
-                <InputBase placeholder="What's on your mind..." sx={{
+                <InputBase value={post} onChange={(e) => setPost(e.target.value)} placeholder="What's on your mind..." sx={{
                     width: "100%",
                     backgroundColor: palette.neutral.light,
                     borderRadius: '2rem',
                     p: "1rem 2rem"
                 }} />
             </FlexBetween>
-            {image && (
+            {isImage && (
                 <Box border={`1px solid ${palette.neutral.medium}`} borderRadius="5px" mt="1rem" p="1rem" >
                     <Dropzone
+                        onDrop={(acceptedFiles) => setImage(acceptedFiles[0])}
                         acceptedFiles=".jpg, .jpeg, .png" multiple={false}>
                         {({ getRootProps, getInputProps }) => (
                             <FlexBetween>
                                 <Box {...getRootProps()} border={`2px dashed ${palette.primary.main}`} width="100%" p="1rem"
                                     sx={{ ":hover": { cursor: "pointer" } }}
                                 >
-                                    <input {...getInputProps()} />
-                                    {!image ? (
+                                    <input {...getInputProps()}/>
+                                    {!isImage ? (
                                         <Typography>Add Profile Picture</Typography>
                                     ) : (
                                         <FlexBetween >
-                                            <Typography> {image.name}</Typography>
+                                            <Typography> {image && image.name}</Typography>
                                             <EditOutlined />
                                         </FlexBetween>
                                     )}
                                 </Box>
-                                {image && (
-                                    <IconButton onClick={() => setImage(false)}>
+                                {isImage && (
+                                    <IconButton onClick={() => setImage(null)}>
                                         <DeleteOutline />
                                     </IconButton>
                                 )}
@@ -52,7 +73,7 @@ const CreatePostWidget = ({ avatar }) => {
             )}
             <Divider sx={{ m: "1.25rem" }} />
             <FlexBetween>
-                <FlexBetween gap=".5rem" onClick={() => setImage(!image)}>
+                <FlexBetween gap=".5rem" onClick={() => setIsImage(!isImage)}>
                     <ImageOutlined sx={{ color: palette.neutral.mediumMain }} />
                     <Typography color={palette.neutral.mediumMain} sx={{ ":hover": { cursor: "pointer", color: palette.neutral.medium } }}>
                         Image
@@ -79,6 +100,9 @@ const CreatePostWidget = ({ avatar }) => {
                     </FlexBetween>
                 )}
                 <Button
+                    disabled={post ? false : true}
+                    variant="contained"
+                    onClick={postHandler}
                     sx={{
                         color: palette.background.alt,
                         backgroundColor: palette.primary.main,
