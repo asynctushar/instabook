@@ -1,14 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { useSelector } from 'react-redux';
-const tempImage = "https://res.cloudinary.com/dlwimftr7/image/upload/v1671801973/instabook/avatars/IMG-20220723-WA0004_xgp5vv.jpg"
 
 const UserImage = ({ avatar, size = "60px", userId }) => {
     const user = useSelector(state => state.userState.user);
     const navigate = useNavigate();
 
     const navigateProfile = () => {
-        if (userId === user.id) {
+        if (userId === user._id) {
             navigate('/me')
         } else {
             navigate(`/user/${userId}`)

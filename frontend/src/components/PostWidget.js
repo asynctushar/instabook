@@ -1,29 +1,31 @@
 import { ChatBubbleOutlined, FavoriteBorderOutlined, FavoriteOutlined, ShareOutlined } from "@mui/icons-material";
 import { IconButton, Tooltip, Typography, useTheme } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import FlexBetween from "../customs/FlexBetween";
 import WidgetWrapper from "../customs/WidgetWrapper";
 import { likePost, unlikePost } from "../redux/actions/postAction";
 import User from "./User";
 
-const PostWidget = ({ post }) => {
+const PostWidget = ({ post}) => {
     const { palette } = useTheme();
+    const ownUser = useSelector(state => state.userState.user);
     const dispatch = useDispatch();
+    const isLiked = post.likes[ownUser._id]
     const likeCount = Object.keys(post.likes).length;
 
     const likeHandler = () => {
-        dispatch(likePost(post.id));
+        dispatch(likePost(post._id));
     }
 
     const unlikeHandler = () => {
-        dispatch(unlikePost(post.id));
+        dispatch(unlikePost(post._id));
     }
 
     return (
         <WidgetWrapper m="1rem 0">
-            <User user={post.user} type="post" />
+            <User userId={post.user} />
             <Typography color={palette.neutral.main} sx={{ mt: '1rem', wordWrap: "break-word" }}>{post.description}</Typography>
-            {post.picture.public_id && (
+            {post.picture && (
                 <img
                     width="100%"
                     height="auto"
@@ -35,7 +37,7 @@ const PostWidget = ({ post }) => {
             <FlexBetween mt="1rem">
                 <FlexBetween gap="1rem" >
                     <FlexBetween gap=".3rem" >
-                        {post.isLiked ? (
+                        {isLiked ? (
                             <Tooltip title="unlike" >
                                 <IconButton onClick={unlikeHandler} >
                                     <FavoriteOutlined style={{ fontSize: "1.7rem" }} sx={{ color: palette.primary.main }} />

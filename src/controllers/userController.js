@@ -73,7 +73,7 @@ exports.getUserDetails = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("User not found.", 404));
     }
 
-    const formattedUser = getFormattedUser;
+    const formattedUser = getFormattedUser(user);
 
     res.status(200).json({
         success: true,
@@ -129,7 +129,7 @@ exports.addFriend = catchAsyncErrors(async (req, res, next) => {
 // Remove a friend
 exports.removeFriend = catchAsyncErrors(async (req, res, next) => {
     const id = req.params.id;
-    const user = req.user;
+    let user = req.user;
 
     if (user.id === id) {
         return next(new ErrorHandler("You can't  add or remove yourself as a friend.", 400))
@@ -147,10 +147,10 @@ exports.removeFriend = catchAsyncErrors(async (req, res, next) => {
     user.friends = user.friends.filter((friend) => friend.toString() !== id);
     friend.friends = friend.friends.filter((friend) => friend.toString() !== user.id);
 
-    await user.save();
+    user = await user.save();
     await friend.save();
 
-    res.status(400).json({
+    res.status(200).json({
         success: true,
         user,
         message: "User removed from your friend list."

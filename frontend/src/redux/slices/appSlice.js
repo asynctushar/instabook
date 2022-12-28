@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    mode: 'light'
+    mode: 'light',
+    error: undefined
 }
 
 const appSlice = createSlice({

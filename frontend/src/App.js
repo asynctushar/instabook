@@ -12,7 +12,6 @@ import Loader from './components/Loader';
 import NavBar from './components/NavBar';
 import ProtectedRoute from './customs/ProtectedRoute';
 import Profile from './screens/Profile';
-import UserProfile from './screens/UserProfile';
 
 const App = () => {
     const { mode } = useSelector((state) => state.appState);
@@ -39,12 +38,12 @@ const App = () => {
                             } />
                             <Route path="/me" element={
                                 <ProtectedRoute >
-                                    <Profile />
+                                    <Profile type="own" />
                                 </ProtectedRoute>
                             } />
                             <Route path="/user/:id" element={
                                 <ProtectedRoute >
-                                    <UserProfile />
+                                    <Profile type="other" />
                                 </ProtectedRoute>
                             } />
                             <Route path="/login" element={<LogIn />} />

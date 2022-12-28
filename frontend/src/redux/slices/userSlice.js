@@ -3,9 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     isAuthenticated: false,
     user: undefined,
-    isLoading: true,
-    friends: [],
-    singleUser: undefined
+    isLoading: true
 }
 
 const userSlice = createSlice({
@@ -23,12 +21,6 @@ const userSlice = createSlice({
             state.user = [];
             state.isAuthenticated = false;
         },
-        setFriend: (state, action) => {
-            state.friends = action.payload;
-        },
-        setSingleUser: (state, action) => {
-            state.singleUser = action.payload;
-        }
     }
 });
 

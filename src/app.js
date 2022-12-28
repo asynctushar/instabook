@@ -18,6 +18,13 @@ app.use(express.json({ limit: "60mb" }));
 app.use(express.urlencoded({ extended: true, limit: "60mb" }));
 app.use(cookieParser());
 
+if (process.env.NODE_ENV !== "PRODUCTION") {
+    app.use(require('cors')({
+        origin: "*",
+        optionsSuccessStatus: 200
+    }))
+}
+
 app.use('/api/v1', userRoutes);
 app.use('/api/v1', postRoutes);
 app.use('/api/v1', commentRoutes);

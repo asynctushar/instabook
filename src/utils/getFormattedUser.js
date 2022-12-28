@@ -4,9 +4,7 @@ const getFormattedUser = (user) => {
         name: user.name,
         avatar: user.avatar,
         location: user.location,
-        occupation: user.occupation,
-        impressions: user.impressions,
-        viewedProfile: user.viewedProfile,
+        occupation: user.occupation
     }
 }
 

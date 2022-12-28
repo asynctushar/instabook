@@ -13,7 +13,7 @@ import { getAllFeedPosts } from '../redux/actions/postAction';
 const Home = () => {
     const dispath = useDispatch();
     const isMobileScreen = useMediaQuery("(max-width: 980px)");
-    const { user, friends, isAuthenticated } = useSelector(state => state.userState);
+    const { user, isAuthenticated } = useSelector(state => state.userState);
     const navigate = useNavigate();
     const { posts, isLoading } = useSelector(state => state.postState);
 
@@ -34,16 +34,16 @@ const Home = () => {
             )}
 
             <Box width={isMobileScreen ? undefined : "42%"}>
-                <CreatePostWidget avatar={user.avatar} />
+                <CreatePostWidget avatar={user.avatar} userId={ user._id}/>
                 {isLoading ? <Loader /> : posts.map(post => (
-                    <PostWidget post={post} key={post.id} />
+                    <PostWidget post={post} key={post._id} type="feed" />
                 ))}
             </Box>
 
             {!isMobileScreen && (
                 <Box flexBasis={isMobileScreen ? undefined : "26%"}>
                     <AdWidget />
-                    <FriendListWidget friends={friends} />
+                    <FriendListWidget friends={user.friends} />
                 </Box>
             )}
         </Box>

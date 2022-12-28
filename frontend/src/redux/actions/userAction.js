@@ -1,11 +1,9 @@
 import userSlice from "../slices/userSlice";
 import axios from 'axios';
 import appSlice from "../slices/appSlice";
-import postSlice from '../slices/postSlice';
 
-const { setUser, setLoader, removeUser, setFriend, setSingleUser } = userSlice.actions;
+const { setUser, setLoader, removeUser } = userSlice.actions;
 const { setError } = appSlice.actions;
-const { setPosts } = postSlice.actions;
 
 // get user from cookie
 export const getUser = () => async (dispatch) => {
@@ -14,7 +12,6 @@ export const getUser = () => async (dispatch) => {
         const { data } = await axios.get('/api/v1/me');
 
         dispatch(setUser(data.user));
-        dispatch(setFriend(data.friends));
         dispatch(setLoader(false));
     } catch (err) {
         dispatch(setError(err.response.data.message));
@@ -28,7 +25,6 @@ export const registerUser = (formData) => async (dispatch) => {
         dispatch(setLoader(true));
         const { data } = await axios.post('/api/v1/register', formData, { headers: { "Content-Type": "multipart/form-data" } });
         dispatch(setUser(data.user));
-        dispatch(setFriend(data.friends));
         dispatch(setLoader(false));
     } catch (err) {
         dispatch(setError(err.response.data.message));
@@ -43,7 +39,6 @@ export const logInUser = (formData) => async (dispatch) => {
         const { data } = await axios.post('/api/v1/login', formData, { headers: { "Content-Type": "application/json" } });
 
         dispatch(setUser(data.user));
-        dispatch(setFriend(data.friends));
         dispatch(setLoader(false));
     } catch (err) {
         dispatch(setError(err.response.data.message));
@@ -65,23 +60,12 @@ export const logOutUser = () => async (dispatch) => {
     }
 }
 
-// get single user 
-export const  getSingleUser = (id) => async (dispatch) => {
-    try {
-        const { data } = await axios.get(`/api/v1/user/${id}`);
-
-        dispatch(setSingleUser(data.user));
-    } catch (err) {
-        dispatch(setError(err.response.data.message))
-    }
-}
-
 // add friend 
 export const addFriend = (userId) => async (dispatch) => {
     try {
         const { data } = await axios.get(`/api/v1/me/friend/add/${userId}`);
-        
-        dispatch(setPosts(data.posts));
+
+        dispatch(setUser(data.user));
     } catch (err) {
         dispatch(setError(err.response.data.message));
     }
@@ -91,10 +75,11 @@ export const addFriend = (userId) => async (dispatch) => {
 export const removeFriend = (userId) => async (dispatch) => {
     try {
         const { data } = await axios.get(`/api/v1/me/friend/remove/${userId}`);
-        
-        dispatch(setPosts(data.posts));
+
+        dispatch(setUser(data.user));
     } catch (err) {
         dispatch(setError(err.response.data.message));
     }
 }
+
 

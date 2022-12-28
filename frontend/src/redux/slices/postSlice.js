@@ -2,8 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     isLoading: true,
-    posts: [],
-    singleUserPosts: []
+    posts: []
 }
 
 const postSlice = createSlice({
@@ -14,13 +13,22 @@ const postSlice = createSlice({
             state.isLoading = action.payload;
         },
         setPosts: (state, action) => {
-            state.posts = action.payload;
+            state.posts = action.payload.reverse();
         },
-        setSingleUserPosts: (state, action) => {
-            state.singleUserPosts = action.payload;
+        setPost: (state, action) => {
+            const copyPosts = [...state.posts];
+            copyPosts.unshift(action.payload);
+
+            state.posts = copyPosts;
         },
-        setOwnUserPosts: (state, action) => {
-            state.ownUserPosts = action.payload;
+        updatePost: (state, action) => {
+            const copyPosts = [...state.posts];
+            
+            state.posts = copyPosts.map((post) => {
+                if (post._id === action.payload._id) return action.payload;
+
+                return post;
+            })
         }
     }
 });

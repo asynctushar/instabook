@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { DeleteOutline, EditOutlined, ImageOutlined, GifBoxOutlined, AttachFileOutlined, MicOutlined, MoreHorizOutlined } from "@mui/icons-material";
 import { createNewPost } from "../redux/actions/postAction";
 
-const CreatePostWidget = ({ avatar }) => {
+const CreatePostWidget = ({ avatar, userId }) => {
     const [image, setImage] = useState(null);
     const [post, setPost] = useState('');
     const [isImage, setIsImage] = useState(false);
@@ -35,7 +35,7 @@ const CreatePostWidget = ({ avatar }) => {
     return (
         <WidgetWrapper>
             <FlexBetween gap="1.5rem">
-                <UserImage avatar={avatar} />
+                <UserImage avatar={avatar} userId={userId}  />
                 <InputBase value={post} onChange={(e) => setPost(e.target.value)} placeholder="What's on your mind..." sx={{
                     width: "100%",
                     backgroundColor: palette.neutral.light,
