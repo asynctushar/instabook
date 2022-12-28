@@ -1,8 +1,7 @@
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const User = require("../models/User");
 const ErrorHandler = require("../utils/errorHandler");
-const getFeedPosts = require("../utils/getFeedPosts");
-const getFriendList = require("../utils/getFriendList");
+const getFormattedUser = require('../utils/getFormattedUser');
 const sendToken = require("../utils/sendToken");
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
@@ -14,7 +13,7 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
     const avatar = req.file;
 
     if (!avatar) {
-        return next(new ErrorHandler("Please upload avatar.", 400));
+        return next(new ErrorHandler("Please upload profile picture.", 400));
     }
 
     const user = await User.create({ name, email, password, location, occupation, avatar });
@@ -62,7 +61,6 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
 
 // get own user details
 exports.getOwnUserDetails = catchAsyncErrors(async (req, res, next) => {
-
     await sendToken(req.user, 200, res);
 })
 
@@ -75,18 +73,7 @@ exports.getUserDetails = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("User not found.", 404));
     }
 
-    const isFriend = req.user.friends.includes(id);
-
-    const formattedUser = {
-        id: user.id,
-        name: user.name,
-        avatar: user.avatar,
-        location: user.location,
-        occupation: user.occupation,
-        impressions: user.impressions,
-        viewedProfile: user.viewedProfile,
-        isFriend
-    }
+    const formattedUser = getFormattedUser;
 
     res.status(200).json({
         success: true,
@@ -108,8 +95,6 @@ exports.logoutUser = catchAsyncErrors(async (req, res, next) => {
     })
 });
 
-// need to update on user posts and user details
-// need to update on a post
 // Add friend 
 exports.addFriend = catchAsyncErrors(async (req, res, next) => {
     const id = req.params.id;
@@ -134,21 +119,13 @@ exports.addFriend = catchAsyncErrors(async (req, res, next) => {
     await user.save();
     await friend.save();
 
-    const friends = await getFriendList(user);
-
-    // feed posts
-    const posts = await getFeedPosts(req);
-
     res.status(200).json({
         success: true,
-        friends,
-        posts,
+        user,
         message: "User added to your friend list."
     })
 })
 
-// need to update on user posts and user details
-// need to update on a post
 // Remove a friend
 exports.removeFriend = catchAsyncErrors(async (req, res, next) => {
     const id = req.params.id;
@@ -173,15 +150,10 @@ exports.removeFriend = catchAsyncErrors(async (req, res, next) => {
     await user.save();
     await friend.save();
 
-    const friends = await getFriendList(user);
-    // feed posts
-    const posts = await getFeedPosts(req);
-
     res.status(400).json({
         success: true,
-        friends,
-        message: "User removed from your friend list.",
-        posts
+        user,
+        message: "User removed from your friend list."
     })
 
 });

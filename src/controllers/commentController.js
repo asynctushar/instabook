@@ -2,7 +2,6 @@ const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 const Comment = require('../models/Comments');
 const Post = require('../models/Post');
 const ErrorHandler = require('../utils/errorHandler');
-const getPost = require('../utils/getPost');
 
 // create comment in a post
 exports.createComment = catchAsyncErrors(async (req, res, next) => {
@@ -24,12 +23,10 @@ exports.createComment = catchAsyncErrors(async (req, res, next) => {
     await post.save();
     await post.populate('comments');
 
-    const formattedPost = await getPost(post, req);
-
     res.status(201).json({
         success: true,
         message: "Comment created successfully.",
-        post: formattedPost
+        post
     })
 })
 
@@ -57,10 +54,11 @@ exports.deleteComment = catchAsyncErrors(async (req, res, next) => {
     await comment.delete();
     post.comments = post.comments.filter((comment) => comment.toString() !== commentId);
     await post.save();
-
+    await post.populate('comments');
 
     res.status(200).json({
         success: true,
-        message: "Comment deleted "
+        message: "Comment deleted ",
+        post
     })
 })

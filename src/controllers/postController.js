@@ -1,11 +1,8 @@
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 const Post = require('../models/Post');
 const Comment = require('../models/Comments');
-const getUserDetails = require('../utils/getUserDetails');
 const ErrorHandler = require('../utils/errorHandler');
 const User = require('../models/User');
-const getFeedPosts = require('../utils/getFeedPosts');
-const getPost = require('../utils/getPost');
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 
@@ -37,13 +34,11 @@ exports.createPost = catchAsyncErrors(async (req, res, next) => {
     }
 
     await post.save();
-    const posts = await getFeedPosts(req);
 
     res.status(201).json({
         success: true,
         message: "Post created successfully.",
-        postCount: posts.length,
-        posts
+        post
     })
 });
 
@@ -57,56 +52,21 @@ exports.getPost = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Post not found.", 404))
     }
 
-    const formattedPost = await getPost(post, req);
-
     res.status(200).json({
         success: true,
-        post: formattedPost
+        post
     })
 });
 
 // get all post at feed
 exports.getFeedPosts = catchAsyncErrors(async (req, res, next) => {
-    const posts = await getFeedPosts(req);
+    const allposts = await Post.find();
 
     res.status(201).json({
         success: true,
-        postCount: posts.length,
-        posts
+        posts: allposts
     })
 });
-
-// get own posts
-exports.getOwnPosts = catchAsyncErrors(async (req, res, next) => {
-    const userAllposts = await Post.find({
-        user: req.user.id
-    });
-
-    // all user posts with user details
-    const formattedUserAllPosts = await Promise.all(userAllposts.map(async (post) => {
-        const user = await getUserDetails(post.user, req);
-        const isLiked = post.likes.get(req.user.id);
-
-        return {
-            id: post.id,
-            description: post.description,
-            picture: post.picture,
-            likes: post.likes,
-            isLiked,
-            comments: post.comments,
-            createdAt: post.createdAt,
-            updatedAt: post.updatedAt,
-            user: user
-        }
-    }));
-
-    res.status(201).json({
-        success: true,
-        postCount: userAllposts.length,
-        posts: formattedUserAllPosts.reverse()
-    })
-})
-
 
 // get user posts
 exports.getUserPosts = catchAsyncErrors(async (req, res, next) => {
@@ -121,37 +81,17 @@ exports.getUserPosts = catchAsyncErrors(async (req, res, next) => {
         user: id
     })
 
-    // all user posts with user details
-    const formattedUserAllPosts = await Promise.all(userAllposts.map(async (post) => {
-        const postAuthor = await getUserDetails(post.user, req);
-        const isLiked = post.likes.get(req.user.id);
-
-        return {
-            id: post.id,
-            description: post.description,
-            picture: post.picture,
-            likes: post.likes,
-            isLiked,
-            comments: post.comments,
-            createdAt: post.createdAt,
-            updatedAt: post.updatedAt,
-            user: postAuthor
-        }
-    }));
-
     res.status(201).json({
         success: true,
-        postCount: userAllposts.length,
-        posts: formattedUserAllPosts.reverse()
+        posts: userAllposts
     })
 });
 
-// need to update  on useposts ands own posts if so
+// resolve nead in case of like at post page
 // Like post
 exports.likepost = catchAsyncErrors(async (req, res, next) => {
     const postId = req.params.id;
     const userId = req.user.id;
-
 
     const post = await Post.findById(postId);
     let isLiked = post.likes.get(userId);
@@ -163,19 +103,13 @@ exports.likepost = catchAsyncErrors(async (req, res, next) => {
     post.likes.set(userId, true);
     await post.save();
 
-
-    // specific post and feed post
-    const formattedPost = await getPost(post, req);
-    const posts = await getFeedPosts(req);
-
     res.status(200).json({
         success: true,
-        post: formattedPost,
-        posts
+        post
     })
 });
 
-// need to update on user posts and own posts if so
+// resolve need in case of like at post page
 // UnLike post 
 exports.unLikePost = catchAsyncErrors(async (req, res, next) => {
     const postId = req.params.id;
@@ -191,15 +125,9 @@ exports.unLikePost = catchAsyncErrors(async (req, res, next) => {
     post.likes.delete(userId, true);
     await post.save();
 
-
-    // specific post and feed posts 
-    const formattedPost = await getPost(post, req);
-    const posts = await getFeedPosts(req);
-
     res.status(200).json({
         success: true,
-        post: formattedPost,
-        posts
+        post
     })
 });
 
