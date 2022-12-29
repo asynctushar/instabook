@@ -67,7 +67,7 @@ const Profile = ({ type }) => {
                     <Box width={isMobileScreen ? undefined : "60%"}>
                         {type === "own" && <CreatePostWidget avatar={user.avatar} userId={user._id} />}
 
-                        <WidgetWrapper mt="1.5rem">
+                        <WidgetWrapper mt={type === "own" ? "1.5rem" : undefined}>
                             <Typography variant="h3" fontWeight={700} textAlign="center" color={palette.neutral.dark} sx={{ mb: '1rem' }} >Posts</Typography>
                             <Divider />
                             {isLoading ? (

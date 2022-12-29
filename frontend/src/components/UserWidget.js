@@ -10,7 +10,7 @@ const UserWidget = ({ user, at = "home", type = "own" }) => {
 
     return (
         <WidgetWrapper >
-            <User userId={user._id} type={type} at={at} />
+            <User userId={user._id} at={at} />
             <Divider sx={{ mt: at === "profile" ? "3rem" : "1rem" }} />
             <Box p="1rem 0">
                 <Box display="flex" alignItems="center" gap="1rem" mb=".5rem" >

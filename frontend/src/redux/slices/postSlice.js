@@ -2,7 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     isLoading: true,
-    posts: []
+    posts: [],
+    singlePost: undefined
 }
 
 const postSlice = createSlice({
@@ -23,12 +24,15 @@ const postSlice = createSlice({
         },
         updatePost: (state, action) => {
             const copyPosts = [...state.posts];
-            
+
             state.posts = copyPosts.map((post) => {
                 if (post._id === action.payload._id) return action.payload;
 
                 return post;
             })
+        },
+        setSinglePost: (state, action) => {
+            state.singlePost = action.payload;
         }
     }
 });

@@ -47,7 +47,7 @@ exports.createPost = catchAsyncErrors(async (req, res, next) => {
 exports.getPost = catchAsyncErrors(async (req, res, next) => {
     const id = req.params.id;
 
-    const post = await (await Post.findById(id)).populate('comments');
+    const post = await (await Post.findById(id));
     if (!post) {
         return next(new ErrorHandler("Post not found.", 404))
     }

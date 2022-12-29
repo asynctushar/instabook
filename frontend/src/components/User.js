@@ -9,10 +9,11 @@ import { useEffect, useState } from 'react';
 import appSlice from '../redux/slices/appSlice'
 import axios from 'axios';
 
-const User = ({ userId, at = "post", type = "other" }) => {
+const User = ({ userId, at = "post"}) => {
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isFriend, setIsFriend] = useState(undefined);
+    const [type, setType] = useState("other");
     const ownUser = useSelector(state => state.userState.user);
     const { setError } = appSlice.actions;
     const navigate = useNavigate();
@@ -24,6 +25,7 @@ const User = ({ userId, at = "post", type = "other" }) => {
     useEffect(() => {
         if (userId === ownUser._id) {
             setUser(ownUser);
+            setType('own');
             setIsLoading(false);
         } else {
             const getUserDetails = async (id) => {
@@ -79,6 +81,7 @@ const User = ({ userId, at = "post", type = "other" }) => {
                         <Typography color={theme.palette.neutral.main}>
                             {at === 'home' && user.friends.length + " friends"}
                             {at === 'post' && user.location}
+                            {at === 'comment' && user.location}
                             {at === 'friendList' && user.occupation}
                         </Typography>
                     </Box>
@@ -94,7 +97,7 @@ const User = ({ userId, at = "post", type = "other" }) => {
                                     color: palette.background.alt,
                                     backgroundColor: palette.primary.main,
                                 }}> Unfriend</Button>}
-                            {type === "other" && <Button size={isMobileScreen ? "large" : "medium"} variant="contained">Message</Button>}
+                            <Button size={isMobileScreen ? "large" : "medium"} variant="contained">Message</Button>
                         </FlexBetWeen>
                     )}
                 </FlexBetWeen>

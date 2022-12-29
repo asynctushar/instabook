@@ -21,12 +21,26 @@ exports.createComment = catchAsyncErrors(async (req, res, next) => {
     post.comments.push(comment.id);
 
     await post.save();
-    await post.populate('comments');
 
     res.status(201).json({
         success: true,
         message: "Comment created successfully.",
         post
+    })
+})
+
+// get specific comment
+exports.getComment = catchAsyncErrors(async (req, res, next) => {
+    const commentId = req.params.id;
+
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+        return next(new ErrorHandler("Comment not Found.", 404))
+    }
+
+    res.status(200).json({
+        success: true,
+        comment
     })
 })
 
@@ -39,7 +53,7 @@ exports.deleteComment = catchAsyncErrors(async (req, res, next) => {
 
     const post = await Post.findById(postId);
     if (!post) {
-        return next(new ErrorHandler("Comment not Found.", 404))
+        return next(new ErrorHandler("Post not Found.", 404))
     }
 
     const comment = await Comment.findById(commentId);
