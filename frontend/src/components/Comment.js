@@ -24,7 +24,7 @@ const Comment = ({ commentId }) => {
         }
 
         getCommentDetails(commentId);
-    }, [commentId])
+    }, [commentId]) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <Box px="1rem">

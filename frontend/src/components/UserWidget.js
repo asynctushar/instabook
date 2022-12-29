@@ -58,7 +58,8 @@ const UserWidget = ({ user, at = "home", type = "own" }) => {
                             <Typography color={palette.neutral.medium} >Social Network</Typography>
                         </Box>
                     </FlexBetween>
-                    <EditOutlined sx={{ color: palette.neutral.main }} />
+                    {type === 'own' && <EditOutlined sx={{ color: palette.neutral.main }} />}
+
                 </FlexBetween>
                 <FlexBetween gap="1rem" >
                     <FlexBetween gap="1rem">
@@ -68,7 +69,7 @@ const UserWidget = ({ user, at = "home", type = "own" }) => {
                             <Typography color={palette.neutral.medium} >Network Platform</Typography>
                         </Box>
                     </FlexBetween>
-                    <EditOutlined sx={{ color: palette.neutral.main }} />
+                    {type === 'own' && <EditOutlined sx={{ color: palette.neutral.main }} />}
                 </FlexBetween>
             </Box >
         </WidgetWrapper >

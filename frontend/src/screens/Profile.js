@@ -67,16 +67,22 @@ const Profile = ({ type }) => {
                     <Box width={isMobileScreen ? undefined : "60%"}>
                         {type === "own" && <CreatePostWidget avatar={user.avatar} userId={user._id} />}
 
-                        <WidgetWrapper mt={type === "own" ? "1.5rem" : undefined}>
+                        <WidgetWrapper mt={type === "own" || isMobileScreen ? "1.5rem" : undefined}>
                             <Typography variant="h3" fontWeight={700} textAlign="center" color={palette.neutral.dark} sx={{ mb: '1rem' }} >Posts</Typography>
                             <Divider />
                             {isLoading ? (
                                 <Box minHeight="50vh" display='flex' alignItems="center" mb="2rem">
                                     <Loader />
                                 </Box>
-                            ) : posts && posts.map(post => (
-                                <PostWidget post={post} key={post._id} />
-                            ))}
+                            ) : (
+                                <Fragment>
+                                    {posts && posts.length < 1 ? (
+                                        <Typography textAlign="center" sx={{ m: "2rem auto" }}>No post yet...</Typography>
+                                    ) : (posts.map(post => (
+                                        <PostWidget post={post} key={post._id} />
+                                    )))}
+                                </Fragment>
+                            )}
                         </WidgetWrapper>
                     </Box>
                 </Box>

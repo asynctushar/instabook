@@ -2,7 +2,7 @@ import userSlice from "../slices/userSlice";
 import axios from 'axios';
 import appSlice from "../slices/appSlice";
 
-const { setUser, setLoader, removeUser } = userSlice.actions;
+const { setUser, setLoader, removeUser, setSearchUsers, setSearchLoader } = userSlice.actions;
 const { setError } = appSlice.actions;
 
 // get user from cookie
@@ -79,6 +79,20 @@ export const removeFriend = (userId) => async (dispatch) => {
         dispatch(setUser(data.user));
     } catch (err) {
         dispatch(setError(err.response.data.message));
+    }
+}
+
+// search user
+export const searchUser = (keyword) => async (dispatch) => {
+    try {
+        dispatch(setSearchLoader(true));
+        const { data } = await axios.get(`/api/v1/search?keyword=${keyword}`);
+
+        dispatch(setSearchUsers(data.users));
+        dispatch(setSearchLoader(false));
+    } catch (err) {
+        dispatch(setError(err.response.data.message));
+        dispatch(setSearchLoader(false));
     }
 }
 

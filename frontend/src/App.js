@@ -13,6 +13,7 @@ import NavBar from './components/NavBar';
 import ProtectedRoute from './customs/ProtectedRoute';
 import Profile from './screens/Profile';
 import Post from './screens/Post';
+import Search from './screens/Search';
 
 const App = () => {
     const { mode } = useSelector((state) => state.appState);
@@ -50,6 +51,11 @@ const App = () => {
                             <Route path="/post/:id" element={
                                 <ProtectedRoute >
                                     <Post />
+                                </ProtectedRoute>
+                            } />
+                            <Route path="/search" element={
+                                <ProtectedRoute >
+                                    <Search />
                                 </ProtectedRoute>
                             } />
                             <Route path="/login" element={<LogIn />} />

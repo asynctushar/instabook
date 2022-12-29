@@ -1,4 +1,4 @@
-import { useTheme, useMediaQuery, Box, IconButton, FormControl, MenuItem, Select, Typography, InputBase, Backdrop } from '@mui/material';
+import { useTheme, useMediaQuery, Box, IconButton, FormControl, MenuItem, Select, Typography, InputBase } from '@mui/material';
 import { Search, Message, DarkMode, LightMode, Notifications, Help, Menu, Close } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,8 @@ import { logOutUser } from '../redux/actions/userAction';
 const NavBar = () => {
     const { user, isAuthenticated } = useSelector((state) => state.userState);
     const [isMobileMenuToggle, setIsMobileMenuToggle] = useState(false);
+    const [searchKeyword, setSearchKeyword] = useState('');
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const isMobileScreen = useMediaQuery('(max-width: 980px)');
@@ -19,6 +21,11 @@ const NavBar = () => {
     const dark = theme.palette.neutral.dark;
     const primaryDark = theme.palette.primary.dark;
     const alt = theme.palette.background.alt;
+
+    const searchHandler = () => {
+        navigate(`/search?keyword=${searchKeyword.trim()}`);
+        setSearchKeyword('');
+    }
 
     return (
         <FlexBetween padding="1rem 6%" backgroundColor={alt} >
@@ -32,14 +39,15 @@ const NavBar = () => {
                 }}>
                     Instabook
                 </Typography>
-                {!isMobileScreen && (
-                    <FlexBetween backgroundColor={neutralLight} borderRadius="9px" gap="3rem" padding=".1rem .5rem .1rem 1.5rem">
-                        <InputBase placeholder="Search..." />
-                        <IconButton>
+                    <FlexBetween backgroundColor={neutralLight} borderRadius="9px" padding=".1rem .5rem .1rem 1.5rem">
+                    <InputBase placeholder="Search..." value={searchKeyword}
+                        onChange={(e) => setSearchKeyword(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && searchHandler()}
+                    />
+                        <IconButton onClick={searchHandler} disabled={!searchKeyword.trim()}>
                             <Search />
                         </IconButton>
                     </FlexBetween>
-                )}
             </FlexBetween>
             {!isMobileScreen ? (
                 <FlexBetween gap="2rem">

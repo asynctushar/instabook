@@ -1,4 +1,4 @@
-import { Typography, useTheme, Box, IconButton, useMediaQuery, Button } from '@mui/material';
+import { Typography, useTheme, Box, IconButton, useMediaQuery, Button, Tooltip } from '@mui/material';
 import { Add, Remove } from '@mui/icons-material';
 import FlexBetWeen from '../customs/FlexBetween';
 import UserImage from './UserImage';
@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import appSlice from '../redux/slices/appSlice'
 import axios from 'axios';
 
-const User = ({ userId, at = "post"}) => {
+const User = ({ userId, at = "post" }) => {
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isFriend, setIsFriend] = useState(undefined);
@@ -102,8 +102,9 @@ const User = ({ userId, at = "post"}) => {
                     )}
                 </FlexBetWeen>
             )}
-            {at !== "profile" && isFriend === false && <IconButton onClick={addFriendHandler}><Add /></IconButton>}
-            {at !== "profile" && isFriend === true && <IconButton onClick={removeFriendHandler}><Remove /></IconButton>}
+            {at !== "profile" && isFriend === false && <Tooltip title="Add friend"><IconButton onClick={addFriendHandler}><Add /></IconButton></Tooltip>}
+            {at !== "profile" && isFriend === true && <Tooltip title="Unfriend" ><IconButton onClick={removeFriendHandler}><Remove /></IconButton></Tooltip>}
+
         </FlexBetWeen >
     )
 }

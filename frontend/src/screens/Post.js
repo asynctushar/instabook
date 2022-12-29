@@ -34,7 +34,7 @@ const Post = () => {
 
     return (
         <Fragment>
-            {isLoading ? <Loader /> : (
+            {isLoading || singlePost === undefined ? <Loader /> : (
                 <Box display={isMobileScreen ? "block" : "flex"} justifyContent="space-evenly" gap="1rem" m="2rem">
                     {!isMobileScreen && <Button onClick={() => navigate(-1)} size="large" variant="contained" sx={{ alignSelf: "flex-start" }}>Back</Button>}
                     <WidgetWrapper width={isMobileScreen ? undefined : "50%"} mb={isMobileScreen ? "1rem" : "unset"} height="fit-content">

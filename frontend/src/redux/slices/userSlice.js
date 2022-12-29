@@ -3,7 +3,9 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     isAuthenticated: false,
     user: undefined,
-    isLoading: true
+    isLoading: true,
+    searchUsers: [],
+    isSearchLoading: true
 }
 
 const userSlice = createSlice({
@@ -21,6 +23,12 @@ const userSlice = createSlice({
             state.user = [];
             state.isAuthenticated = false;
         },
+        setSearchUsers: (state, action) => {
+            state.searchUsers = action.payload;
+        },
+        setSearchLoader: (state, action) => {
+            state.isSearchLoading = action.payload;
+        }
     }
 });
 

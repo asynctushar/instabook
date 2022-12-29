@@ -1,11 +1,10 @@
 import { Box, Divider, Typography, useTheme, InputBase, Button } from "@mui/material";
 import { Fragment, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import FlexBetween from "../customs/FlexBetween";
 import WidgetWrapper from "../customs/WidgetWrapper";
 import { createComment } from "../redux/actions/postAction";
 import Comment from "./Comment";
-import Loader from "./Loader";
 
 const CommentsWidget = ({ comments, postId }) => {
     const [myComment, setMyComment] = useState('');
