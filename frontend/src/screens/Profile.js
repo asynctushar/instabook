@@ -8,7 +8,7 @@ import FriendListWidget from "../components/FriendListWidget";
 import WidgetWrapper from "../customs/WidgetWrapper";
 import CreatePostWidget from "../components/CreatePostWidget";
 import { getSingleUserPosts } from '../redux/actions/postAction';
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import appSlice from '../redux/slices/appSlice'
 
@@ -16,14 +16,20 @@ const Profile = ({ type }) => {
     const dispatch = useDispatch();
     const [user, setUser] = useState(undefined);
     const ownUser = useSelector((state) => state.userState.user);
+    const isAuthenticated = useSelector(state => state.userState.isAuthenticated);
     const { isLoading, posts } = useSelector(state => state.postState);
     const isMobileScreen = useMediaQuery('(max-width: 980px)');
     const [isUserLoading, setIsUserLoading] = useState(true);
     const { setError } = appSlice.actions;
     const { palette } = useTheme();
     const { id } = useParams();
+    const navigate = useNavigate();
 
     useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login');
+        }
+
         if (type === "own") {
             setUser(ownUser);
             setIsUserLoading(false);
@@ -44,7 +50,7 @@ const Profile = ({ type }) => {
 
             getUserDetails();
         }
-    }, [id, type]);  // eslint-disable-line react-hooks/exhaustive-deps
+    }, [id, type, isAuthenticated, navigate]);  // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (user) {

@@ -1,5 +1,7 @@
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const User = require("../models/User");
+const Comment = require('../models/Comments');
+const Post = require('../models/Post');
 const ErrorHandler = require("../utils/errorHandler");
 const getFormattedUser = require('../utils/getFormattedUser');
 const sendToken = require("../utils/sendToken");
@@ -154,6 +156,98 @@ exports.removeFriend = catchAsyncErrors(async (req, res, next) => {
         success: true,
         user,
         message: "User removed from your friend list."
+    });
+});
+
+// search user
+exports.searchUser = catchAsyncErrors(async (req, res, next) => {
+    const keyword = req.query.keyword;
+
+    if (!keyword) {
+        return next(new ErrorHandler("Please enter keyword query.", 400));
+    }
+
+    const users = await User.find({
+        name: {
+            $regex: keyword,
+            $options: "i"
+        }
     })
 
-});
+    res.status(200).json({
+        success: true,
+        users
+    });
+})
+
+// delete user profile
+exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
+    let userFriends = [];
+    // find user friends
+    await Promise.all(req.user.friends.map(async (friendId) => {
+        const friend = await User.findById(friendId);
+
+        userFriends.push(friend);
+    }));
+
+    // remove user from userfriend's friendlist 
+    await Promise.all(userFriends.map(async (friend) => {
+        friend.friends = friend.friends.filter((id) => id.toString() !== req.user.id);
+
+        await friend.save();
+    }))
+
+    const userPosts = await Post.find({
+        user: req.user.id
+    });
+
+    // delete userposts's comments
+    await Promise.all(userPosts.map(async (post) => {
+        const userPostsComments = await Comment.find({
+            post: post.id
+        })
+
+        await Promise.all(userPostsComments.map(async (userPostComment) => {
+            await userPostComment.delete();
+        }))
+    }))
+
+    const userComments = await Comment.find({
+        user: req.user.id
+    })
+
+    // delete user's all comments
+
+    await Promise.all(userComments.map(async (userComment) => {
+        const userCommentsPost = await Post.findById(userComment.post)
+
+        userCommentsPost.comments = userCommentsPost.comments.filter((commentId) => commentId.toString() !== userComment.id);
+
+        await userCommentsPost.save();
+        await userComment.delete();
+    }))
+
+
+    // delete user's all posts
+    await Promise.all(userPosts.map(async (userPost) => {
+        if (userPost.picture.public_id) {
+            await cloudinary.uploader.destroy(userPost.picture.public_id);
+        }
+
+        await userPost.delete();
+    }))
+
+    await cloudinary.uploader.destroy(req.user.avatar.public_id);
+    await User.findByIdAndDelete(req.user.id);
+
+    res.cookie("token", null, {
+        expires: new Date(Date.now()),
+        httpOnly: true
+    });
+
+    res.status(200).json({
+        success: true,
+        message: "User deleted successfully"
+    })
+
+})

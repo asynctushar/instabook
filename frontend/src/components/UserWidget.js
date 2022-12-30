@@ -1,12 +1,20 @@
-import { LocationOnOutlined, WorkOutlineOutlined, Twitter, EditOutlined, LinkedIn } from '@mui/icons-material';
-import { Divider, Box, useTheme, Typography } from '@mui/material';
+import { LocationOnOutlined, WorkOutlineOutlined, Twitter, LinkedIn } from '@mui/icons-material';
+import { Divider, Box, useTheme, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText } from '@mui/material';
 import WidgetWrapper from '../customs/WidgetWrapper';
 import FlexBetween from '../customs/FlexBetween';
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import User from './User';
+import { useDispatch } from 'react-redux';
+import { deleteUser } from '../redux/actions/userAction';
 
 const UserWidget = ({ user, at = "home", type = "own" }) => {
     const { palette } = useTheme();
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const dispatch = useDispatch();
+
+    const deleteHandler = () => {
+        dispatch(deleteUser());
+    }
 
     return (
         <WidgetWrapper >
@@ -58,7 +66,6 @@ const UserWidget = ({ user, at = "home", type = "own" }) => {
                             <Typography color={palette.neutral.medium} >Social Network</Typography>
                         </Box>
                     </FlexBetween>
-                    {type === 'own' && <EditOutlined sx={{ color: palette.neutral.main }} />}
 
                 </FlexBetween>
                 <FlexBetween gap="1rem" >
@@ -69,9 +76,41 @@ const UserWidget = ({ user, at = "home", type = "own" }) => {
                             <Typography color={palette.neutral.medium} >Network Platform</Typography>
                         </Box>
                     </FlexBetween>
-                    {type === 'own' && <EditOutlined sx={{ color: palette.neutral.main }} />}
                 </FlexBetween>
             </Box >
+            {type === "own" && at === "profile" && (
+                <Fragment>
+                    <Divider />
+                    <Box display="flex" justifyContent="center" gap="2rem" p="1rem 0" mt="1rem">
+                        <Button variant="outlined" size="large" color="error" onClick={() => setIsDialogOpen(true)}>Delete profile</Button>
+                        <Dialog
+                            fullWidth={true}
+                            open={isDialogOpen}
+                            onClose={() => setIsDialogOpen(false)}
+                            aria-labelledby="responsive-dialog-title"
+                        >
+                            <DialogTitle id="responsive-dialog-title">
+                                {"Do you want to delete your profile?"}
+                            </DialogTitle>
+                            <DialogContent>
+                                <DialogContentText>
+                                    Your post, comment and chat history will alse be deleted.
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button variant="contained" autoFocus onClick={() => setIsDialogOpen(false)} color="primary">
+                                    No
+                                </Button>
+                                <Button variant="outlined" onClick={deleteHandler} autoFocus color="error">
+                                    Yes
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+                        <Button variant="contained" size="large" color="primary">Update profile</Button>
+                    </Box>
+                </Fragment>
+            )}
+
         </WidgetWrapper >
     )
 }

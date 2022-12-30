@@ -96,4 +96,15 @@ export const searchUser = (keyword) => async (dispatch) => {
     }
 }
 
+// delete user 
+export const deleteUser = () => async (dispatch) => {
+    try {
+        await axios.delete('/api/v1/me');
+
+        dispatch(removeUser());
+    } catch (err) {
+        dispatch(setError(err.response.data.message));
+    }
+}
+
 
