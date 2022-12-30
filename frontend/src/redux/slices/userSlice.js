@@ -5,7 +5,8 @@ const initialState = {
     user: undefined,
     isLoading: true,
     searchUsers: [],
-    isSearchLoading: true
+    isSearchLoading: true,
+    isUpdated: false
 }
 
 const userSlice = createSlice({
@@ -28,6 +29,9 @@ const userSlice = createSlice({
         },
         setSearchLoader: (state, action) => {
             state.isSearchLoading = action.payload;
+        },
+        setUpdateStatus: (state, action) => {
+            state.isUpdated = action.payload;
         }
     }
 });

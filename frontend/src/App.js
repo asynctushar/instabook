@@ -14,6 +14,7 @@ import ProtectedRoute from './customs/ProtectedRoute';
 import Profile from './screens/Profile';
 import Post from './screens/Post';
 import Search from './screens/Search';
+import UpdateProfile from './screens/UpdateProfile';
 
 const App = () => {
     const { mode } = useSelector((state) => state.appState);
@@ -41,6 +42,11 @@ const App = () => {
                             <Route path="/me" element={
                                 <ProtectedRoute >
                                     <Profile type="own" />
+                                </ProtectedRoute>
+                            } />
+                            <Route path="/me/update" element={
+                                <ProtectedRoute >
+                                    <UpdateProfile />
                                 </ProtectedRoute>
                             } />
                             <Route path="/user/:id" element={

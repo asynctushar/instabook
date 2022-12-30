@@ -5,12 +5,14 @@ import FlexBetween from '../customs/FlexBetween';
 import { Fragment, useState } from 'react';
 import User from './User';
 import { useDispatch } from 'react-redux';
+import {useNavigate } from 'react-router-dom';
 import { deleteUser } from '../redux/actions/userAction';
 
 const UserWidget = ({ user, at = "home", type = "own" }) => {
     const { palette } = useTheme();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const deleteHandler = () => {
         dispatch(deleteUser());
@@ -66,7 +68,6 @@ const UserWidget = ({ user, at = "home", type = "own" }) => {
                             <Typography color={palette.neutral.medium} >Social Network</Typography>
                         </Box>
                     </FlexBetween>
-
                 </FlexBetween>
                 <FlexBetween gap="1rem" >
                     <FlexBetween gap="1rem">
@@ -106,7 +107,7 @@ const UserWidget = ({ user, at = "home", type = "own" }) => {
                                 </Button>
                             </DialogActions>
                         </Dialog>
-                        <Button variant="contained" size="large" color="primary">Update profile</Button>
+                        <Button variant="contained" size="large" color="primary" onClick={() => navigate('/me/update')}>Update profile</Button>
                     </Box>
                 </Fragment>
             )}

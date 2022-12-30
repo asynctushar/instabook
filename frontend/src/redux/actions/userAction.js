@@ -2,7 +2,7 @@ import userSlice from "../slices/userSlice";
 import axios from 'axios';
 import appSlice from "../slices/appSlice";
 
-const { setUser, setLoader, removeUser, setSearchUsers, setSearchLoader } = userSlice.actions;
+const { setUser, setLoader, removeUser, setSearchUsers, setSearchLoader, setUpdateStatus } = userSlice.actions;
 const { setError } = appSlice.actions;
 
 // get user from cookie
@@ -45,6 +45,22 @@ export const logInUser = (formData) => async (dispatch) => {
         dispatch(setLoader(false));
     }
 }
+// update user
+export const updateUser = (formData) => async (dispatch) => {
+    try {
+        dispatch(setLoader(true));
+        const { data } = await axios.put('/api/v1/me', formData, { headers: { "Content-Type": "multipart/form-data" } });
+
+        dispatch(setUser(data.user));
+        dispatch(setUpdateStatus(true));
+        dispatch(setLoader(false));
+    } catch (err) {
+        dispatch(setError(err.response.data.message));
+        dispatch(setLoader(false));
+    }
+}
+
+
 
 // logout user
 export const logOutUser = () => async (dispatch) => {

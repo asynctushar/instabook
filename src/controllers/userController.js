@@ -47,8 +47,9 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
     if (!email || !password) {
         return next(new ErrorHandler("Please enter email and password.", 400));
     }
-
+    
     const user = await User.findOne({ email }).select("+password");
+    
     if (!user) {
         return next(new ErrorHandler("Incorrect login information.", 401))
     }
@@ -60,6 +61,48 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
 
     await sendToken(user, 200, res);
 });
+
+// update user profile 
+exports.updateUser = catchAsyncErrors(async (req, res, next) => {
+    const { name, email, location, occupation } = req.body;
+    const avatar = req.file;
+    let userData = { name, email, location, occupation }
+
+    const user = await User.findByIdAndUpdate(req.user.id, userData, {
+        new: true,
+        runValidators: true,
+        useFindAndModify: false
+    })
+
+    if (avatar) {
+        // cloudinary
+        const myCloud = await cloudinary.uploader.upload(avatar.path, {
+            folder: '/instabook/avatars',
+            width: 1000,
+            height: 1000,
+            crop: "scale",
+        });
+
+        // removing temp image file
+        fs.rm(avatar.path, { recursive: true }, (err) => { });
+
+        // distroy previous avatar
+        await cloudinary.uploader.destroy(user.avatar.public_id);
+
+        user.avatar = {
+            public_id: myCloud.public_id,
+            url: myCloud.secure_url
+        }
+
+        user.save();
+    }
+
+    res.status(200).json({
+        success: true,
+        message: "User profile updated.",
+        user
+    })
+})
 
 // get own user details
 exports.getOwnUserDetails = catchAsyncErrors(async (req, res, next) => {
@@ -217,7 +260,6 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
     })
 
     // delete user's all comments
-
     await Promise.all(userComments.map(async (userComment) => {
         const userCommentsPost = await Post.findById(userComment.post)
 
@@ -226,7 +268,6 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
         await userCommentsPost.save();
         await userComment.delete();
     }))
-
 
     // delete user's all posts
     await Promise.all(userPosts.map(async (userPost) => {
@@ -249,5 +290,4 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
         success: true,
         message: "User deleted successfully"
     })
-
 })

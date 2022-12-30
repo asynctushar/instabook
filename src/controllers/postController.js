@@ -87,7 +87,6 @@ exports.getUserPosts = catchAsyncErrors(async (req, res, next) => {
     })
 });
 
-// resolve nead in case of like at post page
 // Like post
 exports.likepost = catchAsyncErrors(async (req, res, next) => {
     const postId = req.params.id;
@@ -109,7 +108,6 @@ exports.likepost = catchAsyncErrors(async (req, res, next) => {
     })
 });
 
-// resolve need in case of like at post page
 // UnLike post 
 exports.unLikePost = catchAsyncErrors(async (req, res, next) => {
     const postId = req.params.id;
