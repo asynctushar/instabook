@@ -1,22 +1,50 @@
 import { LocationOnOutlined, WorkOutlineOutlined, Twitter, LinkedIn } from '@mui/icons-material';
-import { Divider, Box, useTheme, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText } from '@mui/material';
+import { Divider, Box, useTheme, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, useMediaQuery, TextField } from '@mui/material';
 import WidgetWrapper from '../customs/WidgetWrapper';
 import FlexBetween from '../customs/FlexBetween';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import User from './User';
-import { useDispatch } from 'react-redux';
-import {useNavigate } from 'react-router-dom';
-import { deleteUser } from '../redux/actions/userAction';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { changePassword, deleteUser } from '../redux/actions/userAction';
+import userSlice from '../redux/slices/userSlice';
+import Loader from './Loader';
 
 const UserWidget = ({ user, at = "home", type = "own" }) => {
     const { palette } = useTheme();
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+    const [oldPassword, setOldPassword] = useState('')
+    const [newPassword, setNewPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
+    const { isUpdateLoading, isUpdated } = useSelector((state) => state.userState);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const setUpdateStatus = userSlice.actions.setUpdateStatus;
+    const isMobileScreen = useMediaQuery("(max-width: 980px)");
 
     const deleteHandler = () => {
         dispatch(deleteUser());
     }
+
+    useEffect(() => {
+        if (isUpdated) {
+            setIsPasswordDialogOpen(false);
+            setUpdateStatus(false);
+        }
+    }, [isUpdated]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const passwordChangeHandler = () => {
+        if (oldPassword.length < 8 || newPassword.length < 8 || confirmPassword.length < 8) return;
+        if (newPassword !== confirmPassword) return;
+
+        dispatch(changePassword({
+            oldPassword,
+            newPassword,
+            confirmPassword
+        }))
+    }
+
 
     return (
         <WidgetWrapper >
@@ -83,11 +111,46 @@ const UserWidget = ({ user, at = "home", type = "own" }) => {
                 <Fragment>
                     <Divider />
                     <Box display="flex" justifyContent="center" gap="2rem" p="1rem 0" mt="1rem">
-                        <Button variant="outlined" size="large" color="error" onClick={() => setIsDialogOpen(true)}>Delete profile</Button>
+                        <Button variant="outlined" size="large" color="primary" onClick={() => setIsPasswordDialogOpen(true)}>
+                            Change Password
+                        </Button>
                         <Dialog
                             fullWidth={true}
-                            open={isDialogOpen}
-                            onClose={() => setIsDialogOpen(false)}
+                            open={isPasswordDialogOpen}
+                        >
+                            <Box minHeight="400px" display="flex" flexDirection="column" justifyContent="center">
+                                {isUpdateLoading ? <Loader /> : (
+                                    <Fragment>
+                                        <DialogTitle textAlign="center" variant="h3" fontWeight="500" color="primary" sx={{ mt: ".5rem" }}> Change Password</DialogTitle>
+                                        <Box display="flex" flexDirection="column" alignItems="center">
+                                            <TextField type="password" value={oldPassword} sx={{ width: "70%", m: ".7rem", fontWeight: "500" }} placeholder="Old Password" onChange={(e) => setOldPassword(e.target.value)} />
+                                            <TextField type="password" value={newPassword} sx={{ width: "70%", m: ".7rem", fontWeight: "500" }} placeholder="New Password" onChange={(e) => setNewPassword(e.target.value)} />
+                                            <TextField type="password" value={confirmPassword} sx={{ width: "70%", m: ".7rem", fontWeight: "500" }} placeholder="Confirm New Password" onChange={(e) => setConfirmPassword(e.target.value)} />
+                                        </Box>
+                                        <Box mb="2rem" mt="1rem" display="flex" gap="2rem" justifyContent="center">
+                                            <Button size="large" variant="outlined" autoFocus onClick={() => setIsPasswordDialogOpen(false)} color="primary">
+                                                Cancel
+                                            </Button>
+                                            <Button size="large" variant="contained" onClick={passwordChangeHandler} autoFocus color="primary">
+                                                Confirm
+                                            </Button>
+                                        </Box>
+                                    </Fragment>
+                                )}
+                            </Box>
+                        </Dialog>
+                        <Button variant="contained" size="large" color="primary" onClick={() => navigate('/me/update')}>Update profile</Button>
+                    </Box>
+                    <Box p="1rem 0">
+                        <Button variant="contained" size="large" color="error"
+                            onClick={() => setIsDeleteDialogOpen(true)}
+                            fullWidth={isMobileScreen ? false : true}
+                            sx={{ width: isMobileScreen ? "50%" : "inherite", margin: "0 auto", display: "block" }}
+                        >Delete profile</Button>
+                        <Dialog
+                            fullWidth={true}
+                            open={isDeleteDialogOpen}
+                            onClose={() => setIsDeleteDialogOpen(false)}
                             aria-labelledby="responsive-dialog-title"
                         >
                             <DialogTitle id="responsive-dialog-title">
@@ -99,7 +162,7 @@ const UserWidget = ({ user, at = "home", type = "own" }) => {
                                 </DialogContentText>
                             </DialogContent>
                             <DialogActions>
-                                <Button variant="contained" autoFocus onClick={() => setIsDialogOpen(false)} color="primary">
+                                <Button variant="contained" autoFocus onClick={() => setIsDeleteDialogOpen(false)} color="primary">
                                     No
                                 </Button>
                                 <Button variant="outlined" onClick={deleteHandler} autoFocus color="error">
@@ -107,7 +170,6 @@ const UserWidget = ({ user, at = "home", type = "own" }) => {
                                 </Button>
                             </DialogActions>
                         </Dialog>
-                        <Button variant="contained" size="large" color="primary" onClick={() => navigate('/me/update')}>Update profile</Button>
                     </Box>
                 </Fragment>
             )}

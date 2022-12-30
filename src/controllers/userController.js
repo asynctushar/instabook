@@ -47,9 +47,9 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
     if (!email || !password) {
         return next(new ErrorHandler("Please enter email and password.", 400));
     }
-    
+
     const user = await User.findOne({ email }).select("+password");
-    
+
     if (!user) {
         return next(new ErrorHandler("Incorrect login information.", 401))
     }
@@ -102,6 +102,31 @@ exports.updateUser = catchAsyncErrors(async (req, res, next) => {
         message: "User profile updated.",
         user
     })
+})
+
+// change password
+exports.changePassword = catchAsyncErrors(async (req, res, next) => {
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+
+    if (!oldPassword) {
+        return next(new ErrorHandler('Please Enter old password.', 400));
+    }
+
+    const user = await User.findById(req.user.id).select("+password");
+    const isMatchPassword = await user.comparePassword(oldPassword);
+
+    if (!isMatchPassword) {
+        return next(new ErrorHandler("Old password is incorrect."), 400);
+    }
+
+    if (newPassword !== confirmPassword) {
+        return next(new ErrorHandler("New password does not match with confirm password."), 400);
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    sendToken(user, 200, res);
 })
 
 // get own user details

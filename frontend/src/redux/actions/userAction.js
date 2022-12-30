@@ -2,7 +2,7 @@ import userSlice from "../slices/userSlice";
 import axios from 'axios';
 import appSlice from "../slices/appSlice";
 
-const { setUser, setLoader, removeUser, setSearchUsers, setSearchLoader, setUpdateStatus } = userSlice.actions;
+const { setUser, setLoader, removeUser, setSearchUsers, setSearchLoader, setUpdateStatus  , setUpdateLoader} = userSlice.actions;
 const { setError } = appSlice.actions;
 
 // get user from cookie
@@ -48,19 +48,32 @@ export const logInUser = (formData) => async (dispatch) => {
 // update user
 export const updateUser = (formData) => async (dispatch) => {
     try {
-        dispatch(setLoader(true));
+        dispatch(setUpdateLoader(true));
         const { data } = await axios.put('/api/v1/me', formData, { headers: { "Content-Type": "multipart/form-data" } });
 
         dispatch(setUser(data.user));
         dispatch(setUpdateStatus(true));
-        dispatch(setLoader(false));
+        dispatch(setUpdateLoader(false));
     } catch (err) {
         dispatch(setError(err.response.data.message));
-        dispatch(setLoader(false));
+        dispatch(setUpdateLoader(false));
     }
 }
 
+// change password
+export const changePassword = (formData) => async (dispatch) => {
+    try {
+        dispatch(setUpdateLoader(true));
+        const { data } = await axios.put('/api/v1/password/change', formData, { headers: { "Content-Type": "application/json" } });
 
+        dispatch(setUser(data.user));
+        dispatch(setUpdateStatus(true));
+        dispatch(setUpdateLoader(false));
+    } catch (err) {
+        dispatch(setError(err.response.data.message));
+        dispatch(setUpdateLoader(false));
+    }
+}
 
 // logout user
 export const logOutUser = () => async (dispatch) => {

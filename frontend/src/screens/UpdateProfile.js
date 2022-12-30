@@ -22,10 +22,10 @@ const updateSchema = yup.object().shape({
 const UpdateProfile = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { user, isUpdated, isLoading } = useSelector((state) => state.userState);
+    const { user, isUpdated, isUpdateLoading } = useSelector((state) => state.userState);
     const theme = useTheme();
     const isMobileScreen = useMediaQuery('(max-width: 800px)');
-    const setUpdateStatus = userSlice.actions.setUpdateStatus
+    const setUpdateStatus = userSlice.actions.setUpdateStatus;
 
     const initialValues = {
         name: user.name,
@@ -41,7 +41,6 @@ const UpdateProfile = () => {
             dispatch(setUpdateStatus(false));
         }
     }, [user, isUpdated, navigate, dispatch]) // eslint-disable-line react-hooks/exhaustive-deps
-
 
     const submitHandler = (values) => {
         const formData = new FormData();
@@ -59,9 +58,9 @@ const UpdateProfile = () => {
     }
 
     return (
-        <Fragment>
-            {isLoading ? <Loader /> : (
-                <Box width={isMobileScreen ? "93%" : "50%"} p="2rem" m="1rem auto" borderRadius="1.5rem" backgroundColor={theme.palette.background.alt}>
+        <Box display="flex" flexDirection="column" justifyContent="center" minHeight="571px" width={isMobileScreen ? "93%" : "50%"} p="2rem" m="1rem auto" borderRadius="1.5rem" backgroundColor={theme.palette.background.alt}>
+            {isUpdateLoading ? <Loader /> : (
+                <Fragment>
                     <Typography color={theme.palette.primary.main} variant='h3' fontWeight="500" sx={{ mb: "1.5rem", textAlign: 'center' }}>
                         Update User Profile
                     </Typography>
@@ -164,9 +163,9 @@ const UpdateProfile = () => {
                             </form>
                         )}
                     </Formik>
-                </Box>
+                </Fragment>
             )}
-        </Fragment>
+        </Box>
     )
 }
 export default UpdateProfile;

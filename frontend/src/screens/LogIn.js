@@ -163,6 +163,7 @@ const LogIn = () => {
                                 onBlur={handleBlur}
                                 onChange={handleChange}
                                 value={values.password}
+                                type="password"
                                 name="password"
                                 error={Boolean(touched.password) && Boolean(errors.password)}
                                 helperText={Boolean(touched.password) && errors.password}
