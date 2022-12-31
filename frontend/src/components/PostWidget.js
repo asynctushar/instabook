@@ -30,7 +30,7 @@ const PostWidget = ({ post }) => {
     return (
         <WidgetWrapper m="1rem 0">
             <User userId={post.user} />
-            <Typography color={palette.neutral.main} sx={{ mt: '1rem', wordWrap: "break-word" }}>{post.description}</Typography>
+            <Typography color={palette.neutral.main} sx={{ mt: '1.3rem',mx: "1rem", wordWrap: "break-word" }}>{post.description}</Typography>
             {post.picture && (
                 <img
                     width="100%"

@@ -2,7 +2,7 @@ import axios from "axios";
 import postSlice from "../slices/postSlice";
 import appSlice from "../slices/appSlice";
 
-const { setPosts, setLoader, setPost, updatePost, setSinglePost } = postSlice.actions;
+const { setPosts, setLoader, setPost, updatePost, setSinglePost, setDeleteStatus } = postSlice.actions;
 const { setError } = appSlice.actions;
 
 // get feed posts
@@ -91,6 +91,29 @@ export const getSinglePost = (postId) => async (dispatch) => {
 export const createComment = ({ postId, comment }) => async (dispatch) => {
     try {
         const { data } = await axios.post(`/api/v1/post/${postId}/comment`, { comment }, { headers: { "Content-Type": "application/json" } });
+
+        dispatch(setSinglePost(data.post));
+    } catch (err) {
+        dispatch(setError(err.response.data.message));
+    }
+}
+
+// delete a post 
+export const deletePost = (postId) => async (dispatch) => {
+    try {
+        await axios.delete(`/api/v1/post/${postId}/delete`);
+
+        dispatch(setSinglePost(undefined));
+        dispatch(setDeleteStatus(true))
+    } catch (err) {
+        dispatch(setError(err.response.data.message));
+    }
+}
+
+// delete a post 
+export const deleteComment = (postId, commentId) => async (dispatch) => {
+    try {
+        const { data } = await axios.delete(`/api/v1/post/${postId}/${commentId}`);
 
         dispatch(setSinglePost(data.post));
     } catch (err) {

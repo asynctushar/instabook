@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     isLoading: true,
     posts: [],
-    singlePost: undefined
+    singlePost: undefined,
+    isDeleted: false
 }
 
 const postSlice = createSlice({
@@ -33,6 +34,9 @@ const postSlice = createSlice({
         },
         setSinglePost: (state, action) => {
             state.singlePost = action.payload;
+        },
+        setDeleteStatus: (state, action) => {
+            state.isDeleted = action.payload;
         }
     }
 });

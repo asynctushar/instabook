@@ -1,28 +1,36 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { Box, useMediaQuery, IconButton, Typography, Tooltip, useTheme, Button } from '@mui/material';
-import { Fragment, useEffect } from 'react';
+import { Box, useMediaQuery, IconButton, Typography, Tooltip, useTheme, Button, Dialog, DialogTitle, DialogActions } from '@mui/material';
+import { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../components/Loader';
 import WidgetWrapper from '../customs/WidgetWrapper';
 import User from '../components/User';
 import FlexBetween from '../customs/FlexBetween';
-import { FavoriteOutlined, FavoriteBorderOutlined, ShareOutlined } from '@mui/icons-material';
-import { getSinglePost, likePost, unlikePost } from '../redux/actions/postAction';
+import { FavoriteOutlined, FavoriteBorderOutlined, ShareOutlined, Delete } from '@mui/icons-material';
+import { deletePost, getSinglePost, likePost, unlikePost } from '../redux/actions/postAction';
 import CommentsWidget from '../components/CommentsWidget';
+import postSlice from '../redux/slices/postSlice';
 
 const Post = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const ownUser = useSelector((state) => state.userState.user);
-    const { singlePost, isLoading } = useSelector((state) => state.postState);
+    const { singlePost, isLoading, isDeleted } = useSelector((state) => state.postState);
     const isMobileScreen = useMediaQuery("(max-width: 700px)");
     const { palette } = useTheme();
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const setDeleteStatus = postSlice.actions.setDeleteStatus;
 
 
     useEffect(() => {
+        if (isDeleted) {
+            navigate(-1);
+            dispatch(setDeleteStatus(false))
+        }
+
         dispatch(getSinglePost(id))
-    }, [id, dispatch]);
+    }, [id, dispatch, isDeleted]);
 
     const likeHandler = () => {
         dispatch(likePost(singlePost._id));
@@ -30,6 +38,10 @@ const Post = () => {
 
     const unlikeHandler = () => {
         dispatch(unlikePost(singlePost._id));
+    }
+
+    const deleteHandler = () => {
+        dispatch(deletePost(singlePost._id));
     }
 
     return (
@@ -68,11 +80,40 @@ const Post = () => {
                                     <Typography>{Object.keys(singlePost.likes).length}</Typography>
                                 </FlexBetween>
                             </FlexBetween>
-                            <Tooltip title="share" >
-                                <IconButton>
-                                    <ShareOutlined style={{ fontSize: "1.7rem" }} />
-                                </IconButton>
-                            </Tooltip>
+                            <Box>
+                                {singlePost.user === ownUser._id && (
+                                    <Fragment>
+                                        <Tooltip title="delete post" >
+                                            <IconButton onClick={() => setIsDialogOpen(true)}>
+                                                <Delete style={{ fontSize: "1.7rem" }} />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Dialog
+                                            fullWidth={true}
+                                            open={isDialogOpen}
+                                            onClose={() => setIsDialogOpen(false)}
+                                            aria-labelledby="responsive-dialog-title"
+                                        >
+                                            <DialogTitle id="responsive-dialog-title">
+                                                {"Do you want to delete your post?"}
+                                            </DialogTitle>
+                                            <DialogActions>
+                                                <Button variant="contained" autoFocus onClick={() => setIsDialogOpen(false)} color="primary">
+                                                    No
+                                                </Button>
+                                                <Button variant="outlined" onClick={deleteHandler} autoFocus color="error">
+                                                    Yes
+                                                </Button>
+                                            </DialogActions>
+                                        </Dialog>
+                                    </Fragment>
+                                )}
+                                <Tooltip title="share" >
+                                    <IconButton>
+                                        <ShareOutlined style={{ fontSize: "1.7rem" }} />
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
                         </FlexBetween>
                     </WidgetWrapper>
                     <CommentsWidget comments={singlePost.comments} postId={singlePost._id} />

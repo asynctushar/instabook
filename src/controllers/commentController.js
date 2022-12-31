@@ -68,7 +68,6 @@ exports.deleteComment = catchAsyncErrors(async (req, res, next) => {
     await comment.delete();
     post.comments = post.comments.filter((comment) => comment.toString() !== commentId);
     await post.save();
-    await post.populate('comments');
 
     res.status(200).json({
         success: true,

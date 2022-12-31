@@ -1,4 +1,4 @@
-import { Box, Divider, Typography, useTheme, InputBase, Button } from "@mui/material";
+import { Box, Divider, Typography, useTheme, InputBase, Button, useMediaQuery } from "@mui/material";
 import { Fragment, useState } from "react";
 import { useDispatch } from "react-redux";
 import FlexBetween from "../customs/FlexBetween";
@@ -10,6 +10,7 @@ const CommentsWidget = ({ comments, postId }) => {
     const [myComment, setMyComment] = useState('');
     const { palette } = useTheme();
     const dispatch = useDispatch();
+    const isMobileScreen = useMediaQuery("(max-width: 700px)");
 
     const commentHandler = () => {
         dispatch(createComment({ comment: myComment, postId }));
@@ -17,17 +18,17 @@ const CommentsWidget = ({ comments, postId }) => {
     }
 
     return (
-        <WidgetWrapper minWidth="30%" height="fit-content" minHeight="230px" display="flex" flexDirection="column" justifyContent="space-between">
+        <WidgetWrapper width={!isMobileScreen ? "30%" : "unset"} height="fit-content" minHeight="230px" display="flex" flexDirection="column" justifyContent="space-between">
             <Typography variant="h3" fontWeight="500" textAlign="center" sx={{ mb: '1rem' }}>Comments</Typography>
-                <Fragment>
-                    {comments.length < 1 ? (
-                        <Box px="1rem">
-                            <Divider />
-                            <Typography textAlign="center" sx={{ m: "2rem auto" }}>No comment yet</Typography>
-                        </Box>) : comments.map((comment) => (
-                            <Comment commentId={comment} key={comment} />
-                        ))}
-                </Fragment>
+            <Fragment>
+                {comments.length < 1 ? (
+                    <Box px="1rem">
+                        <Divider />
+                        <Typography textAlign="center" sx={{ m: "2rem auto" }}>No comment yet</Typography>
+                    </Box>) : comments.map((comment) => (
+                        <Comment commentId={comment} key={comment} isMyPost/>
+                    ))}
+            </Fragment>
             <FlexBetween gap="1.5rem" px=".5" mb="1rem" >
                 <InputBase value={myComment} onChange={(e) => setMyComment(e.target.value)} placeholder="Write your comment..." sx={{
                     width: "80%",
