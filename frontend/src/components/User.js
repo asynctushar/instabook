@@ -71,7 +71,7 @@ const User = ({ userId, at = "post" }) => {
                 <FlexBetWeen gap=".5rem" flexDirection={at === "profile" ? "column" : "row"} m={at === 'profile' ? "auto" : undefined}>
                     <UserImage avatar={user.avatar} userId={user._id} size={at === "profile" ? (isMobileScreen ? "200px" : "100px") : "60px"} />
                     <Box mt={at === "profile" && isMobileScreen ? "2rem" : undefined}>
-                        <Typography fontSize={at === "profile" && isMobileScreen ? "2rem" : undefined} onClick={() => navigateProfile()} variant="h4" color={theme.palette.neutral.dark} fontWeight="500" sx={{
+                        <Typography fontSize={at === "profile" && isMobileScreen ? "2rem" : undefined} textTransform="capitalize" onClick={() => navigateProfile()} variant="h4" color={theme.palette.neutral.dark} fontWeight="500" sx={{
                             ":hover": {
                                 cursor: "pointer"
                             }

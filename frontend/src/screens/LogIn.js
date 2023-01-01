@@ -1,4 +1,4 @@
-import { Box, Typography, useMediaQuery, useTheme, TextField, Input, Button } from '@mui/material';
+import { Box, Typography, useMediaQuery, useTheme, TextField, Button } from '@mui/material';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { Fragment, useEffect, useState } from 'react';
@@ -44,7 +44,7 @@ const LogIn = () => {
         if (isAuthenticated) {
             navigate('/')
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, navigate]);
 
     const submitHandler = (values, onSubmitProps) => {
         if (pageType === "login") {

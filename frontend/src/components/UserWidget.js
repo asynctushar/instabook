@@ -17,7 +17,7 @@ const UserWidget = ({ user, at = "home", type = "own" }) => {
     const [oldPassword, setOldPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-    const { isUpdateLoading, isUpdated } = useSelector((state) => state.userState);
+    const { isUpdateLoading, isUpdated, isDeleteLoading } = useSelector((state) => state.userState);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const setUpdateStatus = userSlice.actions.setUpdateStatus;
@@ -153,27 +153,35 @@ const UserWidget = ({ user, at = "home", type = "own" }) => {
                             onClose={() => setIsDeleteDialogOpen(false)}
                             aria-labelledby="responsive-dialog-title"
                         >
-                            <DialogTitle id="responsive-dialog-title">
-                                {"Do you want to delete your profile?"}
-                            </DialogTitle>
-                            <DialogContent>
-                                <DialogContentText>
-                                    Your post, comment and chat history will alse be deleted.
-                                </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button variant="contained" autoFocus onClick={() => setIsDeleteDialogOpen(false)} color="primary">
-                                    No
-                                </Button>
-                                <Button variant="outlined" onClick={deleteHandler} autoFocus color="error">
-                                    Yes
-                                </Button>
-                            </DialogActions>
+                            {isDeleteLoading ? (
+                                <Box minHeight="400px" display="flex" flexDirection="column" justifyContent="center">
+                                    <Loader />
+                                </Box>
+                            ) : (
+                                <Fragment>
+                                    <DialogTitle id="responsive-dialog-title">
+                                        {"Do you want to delete your profile?"}
+                                    </DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText>
+                                            Your post, comment and chat history will alse be deleted.
+                                        </DialogContentText>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button variant="contained" autoFocus onClick={() => setIsDeleteDialogOpen(false)} color="primary">
+                                            No
+                                        </Button>
+                                        <Button variant="outlined" onClick={deleteHandler} autoFocus color="error">
+                                            Yes
+                                        </Button>
+                                    </DialogActions>
+                                </Fragment>
+                            )}
                         </Dialog>
                     </Box>
-                </Fragment>
-            )}
-
+                </Fragment >
+            )
+            }
         </WidgetWrapper >
     )
 }

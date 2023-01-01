@@ -1,6 +1,6 @@
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 const Post = require('../models/Post');
-const Comment = require('../models/Comments');
+const Comment = require('../models/Comment');
 const ErrorHandler = require('../utils/errorHandler');
 const User = require('../models/User');
 const cloudinary = require('cloudinary').v2;

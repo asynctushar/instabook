@@ -5,7 +5,6 @@ import User from "./User";
 import { useDispatch, useSelector } from "react-redux";
 import appSlice from "../redux/slices/appSlice";
 import { Delete } from "@mui/icons-material";
-import { maxWidth } from "@mui/system";
 import { deleteComment } from "../redux/actions/postAction";
 
 const Comment = ({ commentId }) => {

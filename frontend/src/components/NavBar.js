@@ -80,7 +80,7 @@ const NavBar = () => {
                                 input={<InputBase />}
                             >
                                 <MenuItem value={user.name}>
-                                    <Typography >
+                                    <Typography textTransform="capitalize">
                                         {user.name}
                                     </Typography>
                                 </MenuItem>

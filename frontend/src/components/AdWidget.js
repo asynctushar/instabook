@@ -15,7 +15,7 @@ const AdWidget = () => {
                     Create Ad.
                 </Typography>
             </FlexBetween>
-            <img src={advertisementLink} alt="advertisement-image" width="100%" height="auto" style={{ borderRadius: ".75rem", margin: ".75rem 0" }} />
+            <img src={advertisementLink} alt="advertisement" width="100%" height="auto" style={{ borderRadius: ".75rem", margin: ".75rem 0" }} />
             <FlexBetween>
                 <Typography color={palette.neutral.main}>Bkash and Grameenphone.</Typography>
                 <Typography color={palette.neutral.medium}>bkash.com</Typography>

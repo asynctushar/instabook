@@ -10,6 +10,7 @@ if (process.env.NODE_ENV != "PRODUCTION") {
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
 const commentRoutes = require('./routes/commentRoutes');
+const chatRoutes = require('./routes/chatRoutes');
 const errorMiddleware = require('./middlewares/error');
 
 const app = express();
@@ -28,6 +29,7 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 app.use('/api/v1', userRoutes);
 app.use('/api/v1', postRoutes);
 app.use('/api/v1', commentRoutes);
+app.use('/api/v1', chatRoutes);
 
 // middleware for errors
 app.use(errorMiddleware);

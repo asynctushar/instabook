@@ -1,6 +1,6 @@
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const User = require("../models/User");
-const Comment = require('../models/Comments');
+const Comment = require('../models/Comment');
 const Post = require('../models/Post');
 const ErrorHandler = require("../utils/errorHandler");
 const getFormattedUser = require('../utils/getFormattedUser');
@@ -288,12 +288,14 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
     await Promise.all(userComments.map(async (userComment) => {
         const userCommentsPost = await Post.findById(userComment.post)
 
-        userCommentsPost.comments = userCommentsPost.comments.filter((commentId) => commentId.toString() !== userComment.id);
-
-        await userCommentsPost.save();
+        if (userCommentsPost) {   
+            userCommentsPost.comments = userCommentsPost.comments.filter((commentId) => commentId.toString() !== userComment.id);
+            await userCommentsPost.save();
+        }
+        
         await userComment.delete();
     }))
-
+    
     // delete user's all posts
     await Promise.all(userPosts.map(async (userPost) => {
         if (userPost.picture.public_id) {

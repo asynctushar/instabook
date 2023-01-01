@@ -1,6 +1,6 @@
-import { Fragment, useEffect } from "react";
+import { Fragment } from "react";
 import { useSelector } from "react-redux";
-import { Navigate, useNavigate } from "react-router";
+import { Navigate } from "react-router";
 
 const ProtectedRoute = ({children}) => {
     const { isLoading, isAuthenticated } = useSelector((state) => state.userState);

@@ -58,7 +58,7 @@ const CreatePostWidget = ({ avatar, userId }) => {
                                         <Typography>Add Profile Picture</Typography>
                                     ) : (
                                         <FlexBetween >
-                                            <Typography> {image && image.name}</Typography>
+                                            <Typography sx={{wordBreak: "break-word"}}> {image && image.name}</Typography>
                                             <EditOutlined />
                                         </FlexBetween>
                                     )}

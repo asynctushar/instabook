@@ -7,7 +7,8 @@ const initialState = {
     searchUsers: [],
     isSearchLoading: true,
     isUpdated: false,
-    isUpdateLoading: false
+    isUpdateLoading: false,
+    isDeleteLoading: false
 }
 
 const userSlice = createSlice({
@@ -24,6 +25,9 @@ const userSlice = createSlice({
         removeUser: (state, action) => {
             state.user = [];
             state.isAuthenticated = false;
+        },
+        setDeleteLoader: (state, action) => {
+            state.isDeleteLoading = action.payload;
         },
         setSearchUsers: (state, action) => {
             state.searchUsers = action.payload;
