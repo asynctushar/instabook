@@ -28,6 +28,7 @@ const User = ({ userId, at = "post" }) => {
             setType('own');
             setIsLoading(false);
         } else {
+            setType("other")
             const getUserDetails = async (id) => {
                 try {
                     const { data } = await axios.get(`/api/v1/user/${id}`);
@@ -97,7 +98,7 @@ const User = ({ userId, at = "post" }) => {
                                     color: palette.background.alt,
                                     backgroundColor: palette.primary.main,
                                 }}> Unfriend</Button>}
-                            <Button size={isMobileScreen ? "large" : "medium"} variant="contained">Message</Button>
+                            <Button onClick={() => navigate(`/message/${user.id}`)} size={isMobileScreen ? "large" : "medium"} variant="contained">Message</Button>
                         </FlexBetWeen>
                     )}
                 </FlexBetWeen>

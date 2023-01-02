@@ -6,7 +6,7 @@ const ErrorHandler = require('../utils/errorHandler');
 
 // new message
 exports.createNewMessage = catchAsyncErrors(async (req, res, next) => {
-    const recieverId = req.body.recieverId;
+    const recieverId = req.params.id;
     const description = req.body.description;
 
     if (!description) {
@@ -63,17 +63,26 @@ exports.getAllConversations = catchAsyncErrors(async (req, res, next) => {
 
 // get messages of individual conversation
 exports.getAllMessages = catchAsyncErrors(async (req, res, next) => {
-    const conversation = await Conversation.findById(req.params.id);
+    const recieverId = req.params.id
+    const conversation = await Conversation.findOne({
+        members: { $all: [req.user.id, recieverId] }
+    })
+
     if (!conversation) {
-        return next(new ErrorHandler("Conversation not found", 404));
+        res.status(200).json({
+            success: true,
+            messages: []
+        });
+        
+    } else {
+        const messages = await Message.find({
+            conversationId: conversation._id
+        })
+
+        res.status(200).json({
+            success: true,
+            messages
+        })
     }
 
-    const messages = await Message.find({
-        conversationId: req.params.id
-    })
-
-    res.status(200).json({
-        success: true,
-        messages
-    })
 })

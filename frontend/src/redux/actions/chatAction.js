@@ -19,9 +19,9 @@ export const getAllConversations = () => async (dispatch) => {
 }
 
 // new Message 
-export const createNewMessage = (formData) => async (dispatch) => {
+export const createNewMessage = (recieverId, formData) => async (dispatch) => {
     try {
-        const { data } = await axios.post('/api/v1/message/new', formData, { headers: { "Content-Type": "application/json" } });
+        const { data } = await axios.post(`/api/v1/message/${recieverId}`, formData, { headers: { "Content-Type": "application/json" } });
 
         dispatch(setConversations(data.conversations));
     } catch (err) {

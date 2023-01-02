@@ -16,6 +16,8 @@ import Post from './screens/Post';
 import Search from './screens/Search';
 import UpdateProfile from './screens/UpdateProfile';
 import Conversation from './screens/Conversation';
+import Conversations from './screens/Conversations';
+import { getAllConversations } from './redux/actions/chatAction';
 
 const App = () => {
     const { mode } = useSelector((state) => state.appState);
@@ -25,6 +27,7 @@ const App = () => {
 
     useEffect(() => {
         dispatch(getUser());
+        dispatch(getAllConversations());
     }, [dispatch, isAuthenticated])
 
     return (
@@ -66,6 +69,11 @@ const App = () => {
                                 </ProtectedRoute>
                             } />
                             <Route path="/me/conversations" element={
+                                <ProtectedRoute >
+                                    <Conversations />
+                                </ProtectedRoute>
+                            } />
+                            <Route path="/message/:id" element={
                                 <ProtectedRoute >
                                     <Conversation />
                                 </ProtectedRoute>

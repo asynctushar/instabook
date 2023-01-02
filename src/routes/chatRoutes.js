@@ -4,8 +4,8 @@ const { isAuthenticatedUser } = require('../middlewares/auth');
 
 const Router = express.Router();
 
-Router.route("/message/new").post(isAuthenticatedUser, createNewMessage);
+Router.route("/message/:id").post(isAuthenticatedUser, createNewMessage);
 Router.route("/me/conversations").get(isAuthenticatedUser, getAllConversations);
-Router.route("/conversation/:id/messages").get(isAuthenticatedUser, getAllMessages);
+Router.route("/user/:id/messages").get(isAuthenticatedUser, getAllMessages);
 
 module.exports = Router;
