@@ -4,7 +4,7 @@ const Loader = () => {
     const theme = useTheme();
 
     return (
-        <Box width="100%" height="calc(100% - 80px)" display="flex" justifyContent="center" alignItems="center">
+        <Box width="100%" height="calc(100vh - 80px)" display="flex" justifyContent="center" alignItems="center">
             <CircularProgress sx={{color: theme.palette.neutral.mediumMain}}/>
         </Box>
     )

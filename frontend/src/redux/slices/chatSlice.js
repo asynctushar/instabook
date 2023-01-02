@@ -1,0 +1,22 @@
+import { createSlice } from '@reduxjs/toolkit';
+
+const initialState = {
+    isLoading: true,
+    conversations: []
+}
+
+const chatSlice = createSlice({
+    name: 'chat',
+    initialState,
+    reducers: {
+        setConversations: (state, action) => {
+            state.conversations = action.payload;
+        },
+        setLoader: (state, action) => {
+            state.isLoading = action.payload;
+        }
+    }
+});
+
+
+export default chatSlice;

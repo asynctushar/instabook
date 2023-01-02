@@ -1,4 +1,4 @@
-import { useTheme, useMediaQuery, Box, IconButton, FormControl, MenuItem, Select, Typography, InputBase } from '@mui/material';
+import { useTheme, useMediaQuery, Box, IconButton, FormControl, MenuItem, Select, Typography, InputBase, Tooltip } from '@mui/material';
 import { Search, Message, DarkMode, LightMode, Notifications, Help, Menu, Close } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -39,28 +39,38 @@ const NavBar = () => {
                 }}>
                     Instabook
                 </Typography>
-                    <FlexBetween backgroundColor={neutralLight} borderRadius="9px" padding=".1rem .5rem .1rem 1.5rem">
+                <FlexBetween backgroundColor={neutralLight} borderRadius="9px" padding=".1rem .5rem .1rem 1.5rem">
                     <InputBase placeholder="Search..." value={searchKeyword}
                         onChange={(e) => setSearchKeyword(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && searchHandler()}
                     />
-                        <IconButton onClick={searchHandler} disabled={!searchKeyword.trim()}>
-                            <Search />
-                        </IconButton>
-                    </FlexBetween>
+                    <IconButton onClick={searchHandler} disabled={!searchKeyword.trim()}>
+                        <Search />
+                    </IconButton>
+                </FlexBetween>
             </FlexBetween>
             {!isMobileScreen ? (
                 <FlexBetween gap="2rem">
-                    <IconButton onClick={() => dispatch(changeMode())} >
-                        {theme.palette.mode === "dark" ? (
-                            <DarkMode sx={{ fontSize: "25px" }} />
-                        ) : (
-                            <LightMode sx={{ color: dark, fontSize: "25px" }} />
-                        )}
-                    </IconButton>
-                    <Message sx={{ fontSize: "25px" }} />
-                    <Notifications sx={{ fontSize: "25px" }} />
-                    <Help sx={{ fontSize: "25px" }} />
+                    <Tooltip title="Change Mode">
+                        <IconButton onClick={() => dispatch(changeMode())} >
+                            {theme.palette.mode === "dark" ? (
+                                <DarkMode sx={{ fontSize: "25px" }} />
+                            ) : (
+                                <LightMode sx={{ color: dark, fontSize: "25px" }} />
+                            )}
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Messages" >
+                        <IconButton onClick={() => navigate('/me/conversations')}>
+                            <Message sx={{ fontSize: "25px" }} />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Notifications" >
+                        <Notifications sx={{ fontSize: "25px" }} />
+                    </Tooltip>
+                    <Tooltip title="Help" >
+                        <Help sx={{ fontSize: "25px" }} />
+                    </Tooltip>
                     {isAuthenticated &&
                         <FormControl variant="standard" value={user.name} >
                             <Select value={user.name}
@@ -104,20 +114,34 @@ const NavBar = () => {
                         <Box position="absolute" top="80px" right="0" height="auto" zIndex="2" maxWidth="500px" minWidth="300px" pb="2rem" backgroundColor={alt}>
                             {/* mobile menu items */}
                             <FlexBetween flexDirection="column" justifyContent="center" gap="3rem" >
-                                <IconButton onClick={() => {
-                                    dispatch(changeMode());
-                                    setIsMobileMenuToggle(false);
-                                }
-                                } >
-                                    {theme.palette.mode === "dark" ? (
-                                        <DarkMode sx={{ fontSize: "25px" }} />
-                                    ) : (
-                                        <LightMode sx={{ color: dark, fontSize: "25px" }} />
-                                    )}
-                                </IconButton>
-                                <Message sx={{ fontSize: "25px" }} />
-                                <Notifications sx={{ fontSize: "25px" }} />
-                                <Help sx={{ fontSize: "25px" }} />
+                                <Tooltip title="Change Mode">
+                                    <IconButton onClick={() => {
+                                        dispatch(changeMode());
+                                        setIsMobileMenuToggle(false);
+                                    }
+                                    } >
+                                        {theme.palette.mode === "dark" ? (
+                                            <DarkMode sx={{ fontSize: "25px" }} />
+                                        ) : (
+                                            <LightMode sx={{ color: dark, fontSize: "25px" }} />
+                                        )}
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title="Messages" >
+                                    <IconButton onClick={() => {
+                                        navigate('/me/conversations');
+                                        setIsMobileMenuToggle(false);
+                                    }
+                                    }>
+                                        <Message sx={{ fontSize: "25px" }} />
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title="Notifications" >
+                                    <Notifications sx={{ fontSize: "25px" }} />
+                                </Tooltip>
+                                <Tooltip title="Help" >
+                                    <Help sx={{ fontSize: "25px" }} />
+                                </Tooltip>
                                 {isAuthenticated &&
                                     <FormControl variant="standard" value={user.name} >
                                         <Select value={user.name}

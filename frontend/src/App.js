@@ -15,6 +15,7 @@ import Profile from './screens/Profile';
 import Post from './screens/Post';
 import Search from './screens/Search';
 import UpdateProfile from './screens/UpdateProfile';
+import Conversation from './screens/Conversation';
 
 const App = () => {
     const { mode } = useSelector((state) => state.appState);
@@ -62,6 +63,11 @@ const App = () => {
                             <Route path="/search" element={
                                 <ProtectedRoute >
                                     <Search />
+                                </ProtectedRoute>
+                            } />
+                            <Route path="/me/conversations" element={
+                                <ProtectedRoute >
+                                    <Conversation />
                                 </ProtectedRoute>
                             } />
                             <Route path="/login" element={<LogIn />} />

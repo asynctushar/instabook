@@ -32,17 +32,20 @@ exports.createNewMessage = catchAsyncErrors(async (req, res, next) => {
         })
     }
 
-    const message = await Message.create({
+    await Message.create({
         conversationId: conversation.id,
-        sender: req.user.id,
+        senderId: req.user.id,
         description
+    })
+
+    const conversations = await Conversation.find({
+        members: { $in: [req.user.id] }
     })
 
     res.status(201).json({
         success: true,
         message: "Conversation created successfully",
-        conversation,
-        message
+        conversations
     })
 })
 
@@ -66,11 +69,11 @@ exports.getAllMessages = catchAsyncErrors(async (req, res, next) => {
     }
 
     const messages = await Message.find({
-        conversationId: req.params.id 
+        conversationId: req.params.id
     })
 
     res.status(200).json({
         success: true,
         messages
-   })
+    })
 })
