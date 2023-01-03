@@ -30,7 +30,7 @@ const ConversationBox = ({ conversation }) => {
     return (
         <Fragment>
             {user && (
-                <NavLink style={({ isActive }) => ({ textDecoration: "none", color: palette.neutral.dark, fontWeight: "500", padding: "1rem", textAlign: "center", backgroundColor: isActive ? palette.primary.main : "unset", borderBottom: `1px solid ${palette.neutral.medium}` })} to={`/message/${userId}`}>{user?.name}</NavLink>
+                <NavLink style={({ isActive }) => ({ marginBottom: ".5rem", marginRight: ".5rem", borderRadius: ".75rem", textDecoration: "none", color: isActive ? palette.neutral.light : palette.neutral.dark, fontWeight: "500", padding: "1rem", textAlign: "center", backgroundColor: isActive ? "#4f65f0" : palette.background.default, border: `1px solid ${palette.neutral.medium}` })} to={`/message/${userId}`}>{user?.name}</NavLink>
             )}
         </Fragment>
     )

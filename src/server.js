@@ -35,3 +35,52 @@ process.on('unhandledRejection', (err) => {
         process.exit(1)
     })
 })
+
+// socket.io intregation for realtime chat
+
+const io = require('socket.io')(server, {
+    cors: {
+        origin: "http://localhost:3000"
+    },
+    pingTimeout: 60000
+})
+
+let users = [];
+
+const addUser = (userId, socketId) => {
+    !users.some((user) => user.userId === userId) &&
+        users.push({ userId, socketId })
+}
+
+const removeUser = (socketId) => {
+    users = users.filter((user) => user.socketId !== socketId);
+}
+
+const getUser = (userId) => {
+    return users.find((user) => user.userId === userId);
+}
+
+io.on('connection', (socket) => {
+    // when connect
+    console.log("connected");
+
+    // take socketId and userId from users
+    socket.on("addUser", (userId) => {
+        addUser(userId, socket.id);
+    })
+
+    // send and get message
+    socket.on("sendMessage", ({ senderId, description, recieverId }) => {
+        const user = getUser(recieverId);
+
+        io.to(user?.socketId).emit("getMessage", {
+            senderId,
+            description
+        })
+    })
+
+    // when disconnect
+    socket.once("disconnect", (reason) => {
+        removeUser(socket.id);
+    })
+})
