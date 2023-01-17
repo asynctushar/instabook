@@ -14,7 +14,7 @@ export const getUser = () => async (dispatch) => {
         dispatch(setUser(data.user));
         dispatch(setLoader(false));
     } catch (err) {
-        dispatch(setError(err.response.data.message));
+        dispatch(setError("Please log in."));
         dispatch(setLoader(false));
     }
 }

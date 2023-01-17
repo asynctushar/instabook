@@ -14,6 +14,9 @@ const appSlice = createSlice({
         },
         setError: (state, action) => {
             state.error = action.payload;
+        },
+        clearError: (state, action) => {
+            state.error = undefined;
         }
     }
 });

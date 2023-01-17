@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { changePassword, deleteUser } from '../redux/actions/userAction';
 import userSlice from '../redux/slices/userSlice';
 import Loader from './Loader';
+import appSlice from '../redux/slices/appSlice';
 
 const UserWidget = ({ user, at = "home", type = "own" }) => {
     const { palette } = useTheme();
@@ -21,6 +22,7 @@ const UserWidget = ({ user, at = "home", type = "own" }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const setUpdateStatus = userSlice.actions.setUpdateStatus;
+    const { setError } = appSlice.actions;
     const isMobileScreen = useMediaQuery("(max-width: 980px)");
 
     const deleteHandler = () => {
@@ -35,8 +37,8 @@ const UserWidget = ({ user, at = "home", type = "own" }) => {
     }, [isUpdated]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const passwordChangeHandler = () => {
-        if (oldPassword.length < 8 || newPassword.length < 8 || confirmPassword.length < 8) return;
-        if (newPassword !== confirmPassword) return;
+        if (oldPassword.length < 8 || newPassword.length < 8 || confirmPassword.length < 8) return dispatch(setError("Password lenght is minimum of 8 characters"));
+        if (newPassword !== confirmPassword) return dispatch(setError("New password and confirm password doesn't match"));
 
         dispatch(changePassword({
             oldPassword,

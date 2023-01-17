@@ -25,6 +25,7 @@ const NavBar = () => {
     const searchHandler = () => {
         navigate(`/search?keyword=${searchKeyword.trim()}`);
         setSearchKeyword('');
+        setIsMobileMenuToggle(false)
     }
 
     return (
@@ -39,15 +40,17 @@ const NavBar = () => {
                 }}>
                     Instabook
                 </Typography>
-                <FlexBetween backgroundColor={neutralLight} borderRadius="9px" padding=".1rem .5rem .1rem 1.5rem">
-                    <InputBase placeholder="Search..." value={searchKeyword}
-                        onChange={(e) => setSearchKeyword(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && searchHandler()}
-                    />
-                    <IconButton onClick={searchHandler} disabled={!searchKeyword.trim()}>
-                        <Search />
-                    </IconButton>
-                </FlexBetween>
+                {!isMobileScreen && (
+                    <FlexBetween backgroundColor={neutralLight} borderRadius="9px" padding=".1rem .5rem .1rem 1.5rem">
+                        <InputBase placeholder="Search..." value={searchKeyword}
+                            onChange={(e) => setSearchKeyword(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && searchHandler()}
+                        />
+                        <IconButton onClick={searchHandler} disabled={!searchKeyword.trim()}>
+                            <Search />
+                        </IconButton>
+                    </FlexBetween>
+                )}
             </FlexBetween>
             {!isMobileScreen ? (
                 <FlexBetween gap="2rem">
@@ -114,6 +117,15 @@ const NavBar = () => {
                         <Box position="absolute" top="80px" right="0" height="auto" zIndex="2" maxWidth="500px" minWidth="300px" pb="2rem" backgroundColor={alt}>
                             {/* mobile menu items */}
                             <FlexBetween flexDirection="column" justifyContent="center" gap="3rem" >
+                                <FlexBetween backgroundColor={neutralLight} borderRadius="9px" padding=".1rem .5rem .1rem 1.5rem">
+                                    <InputBase placeholder="Search..." value={searchKeyword}
+                                        onChange={(e) => setSearchKeyword(e.target.value)}
+                                        onKeyDown={(e) => e.key === "Enter" && searchHandler()}
+                                    />
+                                    <IconButton onClick={searchHandler} disabled={!searchKeyword.trim()}>
+                                        <Search />
+                                    </IconButton>
+                                </FlexBetween>
                                 <Tooltip title="Change Mode">
                                     <IconButton onClick={() => {
                                         dispatch(changeMode());

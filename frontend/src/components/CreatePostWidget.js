@@ -7,6 +7,7 @@ import Dropzone from 'react-dropzone';
 import { useDispatch } from "react-redux";
 import { DeleteOutline, EditOutlined, ImageOutlined, GifBoxOutlined, AttachFileOutlined, MicOutlined, MoreHorizOutlined } from "@mui/icons-material";
 import { createNewPost } from "../redux/actions/postAction";
+import appSlice from "../redux/slices/appSlice";
 
 const CreatePostWidget = ({ avatar, userId }) => {
     const [image, setImage] = useState(null);
@@ -15,11 +16,13 @@ const CreatePostWidget = ({ avatar, userId }) => {
     const isMobileScreen = useMediaQuery('(max-width: 980px)');
     const { palette } = useTheme();
     const dispatch = useDispatch();
+    const { setError } = appSlice.actions;
+
 
 
     const postHandler = () => {
-        if (post.length < 10) return;
-        
+        if (post.length < 10) return dispatch(setError("Post must be minimum of 10 characters."));
+
         const formData = new FormData();
 
         formData.append("description", post);
@@ -35,7 +38,7 @@ const CreatePostWidget = ({ avatar, userId }) => {
     return (
         <WidgetWrapper>
             <FlexBetween gap="1.5rem">
-                <UserImage avatar={avatar} userId={userId}  />
+                <UserImage avatar={avatar} userId={userId} />
                 <InputBase value={post} onChange={(e) => setPost(e.target.value)} placeholder="What's on your mind..." sx={{
                     width: "100%",
                     backgroundColor: palette.neutral.light,
@@ -53,12 +56,12 @@ const CreatePostWidget = ({ avatar, userId }) => {
                                 <Box {...getRootProps()} border={`2px dashed ${palette.primary.main}`} width="100%" p="1rem"
                                     sx={{ ":hover": { cursor: "pointer" } }}
                                 >
-                                    <input {...getInputProps()}/>
+                                    <input {...getInputProps()} />
                                     {!isImage ? (
                                         <Typography>Add Profile Picture</Typography>
                                     ) : (
                                         <FlexBetween >
-                                            <Typography sx={{wordBreak: "break-word"}}> {image && image.name}</Typography>
+                                            <Typography sx={{ wordBreak: "break-word" }}> {image && image.name}</Typography>
                                             <EditOutlined />
                                         </FlexBetween>
                                     )}
