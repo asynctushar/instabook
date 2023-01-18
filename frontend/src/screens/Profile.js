@@ -11,6 +11,7 @@ import { getSingleUserPosts } from '../redux/actions/postAction';
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import appSlice from '../redux/slices/appSlice'
+import NotFound from "./NotFound";
 
 const Profile = ({ type }) => {
     const dispatch = useDispatch();
@@ -45,6 +46,7 @@ const Profile = ({ type }) => {
                     setIsUserLoading(false);
                 } catch (err) {
                     dispatch(setError(err.response.data.message));
+                    setIsUserLoading(false);
                 }
             }
 
@@ -60,38 +62,44 @@ const Profile = ({ type }) => {
 
     return (
         <Fragment>
-            {!isUserLoading && (
-                <Box width="100%" padding="2rem 6%" gap="2rem" justifyContent="space-evenly" display={isMobileScreen ? "block" : "flex"}>
+            {isUserLoading ? <Loader /> : (
+                <Fragment>
+                    {type !== 'own' && !user ? (
+                        <NotFound />
+                    ) : (
+                        <Box width="100%" padding="2rem 6%" gap="2rem" justifyContent="space-evenly" display={isMobileScreen ? "block" : "flex"}>
 
-                    <Box flexBasis={isMobileScreen ? undefined : "30%"}>
-                        {user && (
-                            <UserWidget user={user} type={type} at="profile" />
-                        )}
-                        {type === 'own' && <FriendListWidget friends={user.friends} />}
-                    </Box>
+                            <Box flexBasis={isMobileScreen ? undefined : "30%"}>
+                                {user && (
+                                    <UserWidget user={user} type={type} at="profile" />
+                                )}
+                                {type === 'own' && <FriendListWidget friends={user.friends} />}
+                            </Box>
 
-                    <Box width={isMobileScreen ? undefined : "60%"}>
-                        {type === "own" && <CreatePostWidget avatar={user.avatar} userId={user._id} />}
+                            <Box width={isMobileScreen ? undefined : "60%"}>
+                                {type === "own" && <CreatePostWidget avatar={user.avatar} userId={user._id} />}
 
-                        <WidgetWrapper mt={type === "own" || isMobileScreen ? "1.5rem" : undefined}>
-                            <Typography variant="h3" fontWeight={700} textAlign="center" color={palette.neutral.dark} sx={{ mb: '1rem' }} >Posts</Typography>
-                            <Divider />
-                            {isLoading ? (
-                                <Box minHeight="50vh" display='flex' alignItems="center" mb="2rem">
-                                    <Loader />
-                                </Box>
-                            ) : (
-                                <Fragment>
-                                    {posts && posts.length < 1 ? (
-                                        <Typography textAlign="center" sx={{ m: "2rem auto" }}>No post yet...</Typography>
-                                    ) : (posts.map(post => (
-                                        <PostWidget post={post} key={post._id} />
-                                    )))}
-                                </Fragment>
-                            )}
-                        </WidgetWrapper>
-                    </Box>
-                </Box>
+                                <WidgetWrapper mt={type === "own" || isMobileScreen ? "1.5rem" : undefined}>
+                                    <Typography variant="h3" fontWeight={700} textAlign="center" color={palette.neutral.dark} sx={{ mb: '1rem' }} >Posts</Typography>
+                                    <Divider />
+                                    {isLoading ? (
+                                        <Box minHeight="50vh" display='flex' alignItems="center" mb="2rem">
+                                            <Loader />
+                                        </Box>
+                                    ) : (
+                                        <Fragment>
+                                            {posts && posts.length < 1 ? (
+                                                <Typography textAlign="center" sx={{ m: "2rem auto" }}>No post yet...</Typography>
+                                            ) : (posts.map(post => (
+                                                <PostWidget post={post} key={post._id} />
+                                            )))}
+                                        </Fragment>
+                                    )}
+                                </WidgetWrapper>
+                            </Box>
+                        </Box>
+                    )}
+                </Fragment>
             )}
         </Fragment>
     )

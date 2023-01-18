@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider, CssBaseline, Alert, Snackbar } from '@mui/material';
+import { ThemeProvider, CssBaseline, Alert, Snackbar, useMediaQuery } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import { useMemo, useEffect, useState, forwardRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -15,9 +15,9 @@ import ProtectedRoute from './customs/ProtectedRoute';
 import Profile from './screens/Profile';
 import Post from './screens/Post';
 import Search from './screens/Search';
+import NotFound from './screens/NotFound';
 import UpdateProfile from './screens/UpdateProfile';
 import Conversation from './screens/Conversation';
-import Conversations from './screens/Conversations';
 
 const App = () => {
     const { mode } = useSelector((state) => state.appState);
@@ -28,6 +28,7 @@ const App = () => {
     const { error } = useSelector((state) => state.appState);
     const [isErrorOpen, setIsErrorOpen] = useState(false);
     const CustomAlert = forwardRef((props, ref) => <Alert elevation={6} variant="filled" {...props} ref={ref} />);
+    const isMobileScreen = useMediaQuery('(max-width: 600px)');
 
     useEffect(() => {
         dispatch(getUser());
@@ -50,7 +51,7 @@ const App = () => {
                 <CssBaseline />
                 <NavBar />
                 {isLoading ? <Loader /> : (
-                    <div className="app">
+                    <div className="app" >
                         <Routes>
                             <Route path="/" element={
                                 <ProtectedRoute >
@@ -82,19 +83,18 @@ const App = () => {
                                     <Search />
                                 </ProtectedRoute>
                             } />
-                            <Route path="/me/conversations" element={
-                                <ProtectedRoute >
-                                    <Conversations />
-                                </ProtectedRoute>
-                            } />
-                            <Route path="/message/:id" element={
+                            <Route path="/me/conversation" element={
                                 <ProtectedRoute >
                                     <Conversation />
                                 </ProtectedRoute>
                             } />
                             <Route path="/login" element={<LogIn />} />
+                            <Route path="*" element={<NotFound />} />
                         </Routes>
-                        <Snackbar open={isErrorOpen} autoHideDuration={3000} onClose={handleErrorClose}>
+                        <Snackbar open={isErrorOpen} autoHideDuration={3000} onClose={handleErrorClose} anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: isMobileScreen ? "center" : "left"
+                        }} >
                             <CustomAlert onClose={handleErrorClose} severity="error" className="w-fit mx-auto md:mr-auto ">{error}</CustomAlert>
                         </Snackbar>
                     </div>

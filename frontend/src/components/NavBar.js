@@ -64,7 +64,7 @@ const NavBar = () => {
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="Messages" >
-                        <IconButton onClick={() => navigate('/me/conversations')}>
+                        <IconButton onClick={() => navigate('/me/conversation')}>
                             <Message sx={{ fontSize: "25px" }} />
                         </IconButton>
                     </Tooltip>
@@ -141,7 +141,7 @@ const NavBar = () => {
                                 </Tooltip>
                                 <Tooltip title="Messages" >
                                     <IconButton onClick={() => {
-                                        navigate('/me/conversations');
+                                        navigate('/me/conversation');
                                         setIsMobileMenuToggle(false);
                                     }
                                     }>

@@ -18,8 +18,6 @@ const CreatePostWidget = ({ avatar, userId }) => {
     const dispatch = useDispatch();
     const { setError } = appSlice.actions;
 
-
-
     const postHandler = () => {
         if (post.length < 10) return dispatch(setError("Post must be minimum of 10 characters."));
 
@@ -39,12 +37,16 @@ const CreatePostWidget = ({ avatar, userId }) => {
         <WidgetWrapper>
             <FlexBetween gap="1.5rem">
                 <UserImage avatar={avatar} userId={userId} />
-                <InputBase value={post} onChange={(e) => setPost(e.target.value)} placeholder="What's on your mind..." sx={{
-                    width: "100%",
-                    backgroundColor: palette.neutral.light,
-                    borderRadius: '2rem',
-                    p: "1rem 2rem"
-                }} />
+                <InputBase value={post}
+                    onChange={(e) => setPost(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && postHandler()}
+                    placeholder="What's on your mind..."
+                    sx={{
+                        width: "100%",
+                        backgroundColor: palette.neutral.light,
+                        borderRadius: '2rem',
+                        p: "1rem 2rem"
+                    }} />
             </FlexBetween>
             {isImage && (
                 <Box border={`1px solid ${palette.neutral.medium}`} borderRadius="5px" mt="1rem" p="1rem" >

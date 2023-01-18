@@ -26,23 +26,12 @@ const server = app.listen(port, () => {
     console.log(`Server started at port:${port}`);
 })
 
-//Unhandled Promise Rejection
-process.on('unhandledRejection', (err) => {
-    console.log(`Error: ${err.message}`);
-    console.log(`Shutting down the server due to unhandled promise rejection.`);
-
-    server.close(() => {
-        process.exit(1)
-    })
-})
-
 // socket.io intregation for realtime chat
-
 const io = require('socket.io')(server, {
     cors: {
         origin: "http://localhost:3000"
     },
-    pingTimeout: 60000
+    pingTimeout: 120000
 })
 
 let users = [];
@@ -73,10 +62,13 @@ io.on('connection', (socket) => {
     socket.on("sendMessage", ({ senderId, description, recieverId }) => {
         const user = getUser(recieverId);
 
-        io.to(user?.socketId).emit("getMessage", {
-            senderId,
-            description
-        })
+        if (user) {
+            
+            io.to(user?.socketId).emit("getMessage", {
+                senderId,
+                description
+            })
+        }
     })
 
     // when disconnect
@@ -84,3 +76,15 @@ io.on('connection', (socket) => {
         removeUser(socket.id);
     })
 })
+
+
+//Unhandled Promise Rejection
+process.on('unhandledRejection', (err) => {
+    console.log(`Error: ${err.message}`);
+    console.log(`Shutting down the server due to unhandled promise rejection.`);
+
+    server.close(() => {
+        process.exit(1)
+    })
+})
+

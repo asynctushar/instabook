@@ -47,13 +47,13 @@ const PostWidget = ({ post }) => {
                         {isLiked ? (
                             <Tooltip title="unlike" >
                                 <IconButton onClick={unlikeHandler} >
-                                    <FavoriteOutlined style={{ fontSize: "1.7rem" }} sx={{ color: palette.primary.main }} />
+                                    <FavoriteOutlined style={{ fontSize: "1.5rem" }} sx={{ color: palette.primary.main }} />
                                 </IconButton>
                             </Tooltip>
                         ) : (
                             <Tooltip title="like" >
                                 <IconButton onClick={likeHandler}>
-                                    <FavoriteBorderOutlined style={{ fontSize: "1.7rem" }} sx={{ color: palette.primary.main }} />
+                                    <FavoriteBorderOutlined style={{ fontSize: "1.5rem" }} sx={{ color: palette.primary.main }} />
                                 </IconButton>
                             </Tooltip>
                         )}
@@ -62,13 +62,13 @@ const PostWidget = ({ post }) => {
                     <FlexBetween gap=".3rem">
                         <Tooltip title="comment" >
                             <IconButton onClick={navigateToPost}>
-                                <ChatBubbleOutlined style={{ fontSize: "1.7rem" }} />
+                                <ChatBubbleOutlined style={{ fontSize: "1.5rem" }} />
                             </IconButton>
                         </Tooltip>
                         <Typography>{post.comments.length}</Typography>
                     </FlexBetween>
                 </FlexBetween>
-                <ShareOutlined style={{ fontSize: "1.7rem" }} />
+                <ShareOutlined style={{ fontSize: "1.3rem" }} />
             </FlexBetween>
         </WidgetWrapper>
     )

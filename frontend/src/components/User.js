@@ -98,7 +98,7 @@ const User = ({ userId, at = "post" }) => {
                                     color: palette.background.alt,
                                     backgroundColor: palette.primary.main,
                                 }}> Unfriend</Button>}
-                            <Button onClick={() => navigate(`/message/${user.id}`)} size={isMobileScreen ? "large" : "medium"} variant="contained">Message</Button>
+                            <Button onClick={() => navigate('/me/conversation', { state: { id: user.id } })} size={isMobileScreen ? "large" : "medium"} variant="contained">Message</Button>
                         </FlexBetWeen>
                     )}
                 </FlexBetWeen>

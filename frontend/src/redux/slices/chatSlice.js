@@ -11,9 +11,6 @@ const chatSlice = createSlice({
     reducers: {
         setConversations: (state, action) => {
             state.conversations = action.payload.reverse();
-        },
-        setLoader: (state, action) => {
-            state.isLoading = action.payload;
         }
     }
 });

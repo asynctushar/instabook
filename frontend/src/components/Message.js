@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const Message = ({ message, palette, ownUser, reciever, isMobileScreen }) => {
     const scrollRef = useRef();
     const navigate = useNavigate();
-    const user = message.senderId === ownUser._id ? ownUser : reciever
+    const user = message.senderId === ownUser._id ? ownUser : reciever;
 
     useEffect(() => {
         scrollRef?.current.scrollIntoView({ behavior: "smooth" });

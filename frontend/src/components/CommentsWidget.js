@@ -5,37 +5,46 @@ import FlexBetween from "../customs/FlexBetween";
 import WidgetWrapper from "../customs/WidgetWrapper";
 import { createComment } from "../redux/actions/postAction";
 import Comment from "./Comment";
+import appSlice from "../redux/slices/appSlice";
 
 const CommentsWidget = ({ comments, postId }) => {
     const [myComment, setMyComment] = useState('');
     const { palette } = useTheme();
+    const setError = appSlice.actions.setError;
     const dispatch = useDispatch();
     const isMobileScreen = useMediaQuery("(max-width: 700px)");
 
     const commentHandler = () => {
+        if (myComment.length < 1) return dispatch(setError("At least 1 character required"))
+
         dispatch(createComment({ comment: myComment, postId }));
         setMyComment("");
     }
 
     return (
         <WidgetWrapper width={!isMobileScreen ? "30%" : "unset"} height="fit-content" minHeight="230px" display="flex" flexDirection="column" justifyContent="space-between">
-            <Typography variant="h3" fontWeight="500" textAlign="center" sx={{ mb: '1rem' }}>Comments</Typography>
+            <Typography variant="h4" fontWeight="500" textAlign="center" sx={{ mb: '1rem' }}>Comments</Typography>
             <Fragment>
                 {comments.length < 1 ? (
                     <Box px="1rem">
                         <Divider />
                         <Typography textAlign="center" sx={{ m: "2rem auto" }}>No comment yet</Typography>
                     </Box>) : comments.map((comment) => (
-                        <Comment commentId={comment} key={comment} isMyPost/>
+                        <Comment commentId={comment} key={comment} isMyPost />
                     ))}
             </Fragment>
             <FlexBetween gap="1.5rem" px=".5" mb="1rem" >
-                <InputBase value={myComment} onChange={(e) => setMyComment(e.target.value)} placeholder="Write your comment..." sx={{
-                    width: "80%",
-                    backgroundColor: palette.neutral.light,
-                    borderRadius: '.4rem',
-                    p: ".5rem 2rem"
-                }} />
+                <InputBase
+                    value={myComment}
+                    onChange={(e) => setMyComment(e.target.value)}
+                    placeholder="Write your comment..."
+                    onKeyDown={(e) => e.key === "Enter" && commentHandler()}
+                    sx={{
+                        width: "80%",
+                        backgroundColor: palette.neutral.light,
+                        borderRadius: '.4rem',
+                        p: ".5rem 2rem"
+                    }} />
                 <Button
                     disabled={myComment ? false : true}
                     variant="contained"
