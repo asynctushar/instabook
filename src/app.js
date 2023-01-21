@@ -1,5 +1,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 
 // environment setup before routes
 if (process.env.NODE_ENV != "PRODUCTION") {
@@ -30,6 +31,12 @@ app.use('/api/v1', userRoutes);
 app.use('/api/v1', postRoutes);
 app.use('/api/v1', commentRoutes);
 app.use('/api/v1', chatRoutes);
+
+app.use(express.static(path.join(__dirname + "./../frontend/build")));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, "./../frontend/build/index.html"));
+})
 
 // middleware for errors
 app.use(errorMiddleware);

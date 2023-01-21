@@ -28,6 +28,10 @@ CLOUDINARY_API_KEY =
 
 CLOUDINARY_API_SECRET =
 
+NODE_ENV = PRODUCTION
+
 ** in case of local server add this variable too:
+
 FRONTEND_URL =
+
 PORT = 

@@ -29,7 +29,7 @@ const server = app.listen(port, () => {
 // socket.io intregation for realtime chat
 const io = require('socket.io')(server, {
     cors: {
-        origin: "http://localhost:3000"
+        origin: process.env.NODE_ENV !== 'PRODUCTION' ? process.env.FRONTEND_URL : "*"
     },
     pingTimeout: 120000
 })
