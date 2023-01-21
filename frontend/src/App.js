@@ -18,6 +18,7 @@ import Search from './screens/Search';
 import NotFound from './screens/NotFound';
 import UpdateProfile from './screens/UpdateProfile';
 import Conversation from './screens/Conversation';
+import { HelmetProvider } from 'react-helmet-async';
 
 const App = () => {
     const { mode } = useSelector((state) => state.appState);
@@ -46,61 +47,63 @@ const App = () => {
     }
 
     return (
-        <Router>
-            <ThemeProvider theme={theme} >
-                <CssBaseline />
-                <NavBar />
-                {isLoading ? <Loader /> : (
-                    <div className="app" >
-                        <Routes>
-                            <Route path="/" element={
-                                <ProtectedRoute >
-                                    <Home />
-                                </ProtectedRoute>
-                            } />
-                            <Route path="/me" element={
-                                <ProtectedRoute >
-                                    <Profile type="own" />
-                                </ProtectedRoute>
-                            } />
-                            <Route path="/me/update" element={
-                                <ProtectedRoute >
-                                    <UpdateProfile />
-                                </ProtectedRoute>
-                            } />
-                            <Route path="/user/:id" element={
-                                <ProtectedRoute >
-                                    <Profile type="other" />
-                                </ProtectedRoute>
-                            } />
-                            <Route path="/post/:id" element={
-                                <ProtectedRoute >
-                                    <Post />
-                                </ProtectedRoute>
-                            } />
-                            <Route path="/search" element={
-                                <ProtectedRoute >
-                                    <Search />
-                                </ProtectedRoute>
-                            } />
-                            <Route path="/me/conversation" element={
-                                <ProtectedRoute >
-                                    <Conversation />
-                                </ProtectedRoute>
-                            } />
-                            <Route path="/login" element={<LogIn />} />
-                            <Route path="*" element={<NotFound />} />
-                        </Routes>
-                        <Snackbar open={isErrorOpen} autoHideDuration={3000} onClose={handleErrorClose} anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: isMobileScreen ? "center" : "left"
-                        }} >
-                            <CustomAlert onClose={handleErrorClose} severity="error" className="w-fit mx-auto md:mr-auto ">{error}</CustomAlert>
-                        </Snackbar>
-                    </div>
-                )}
-            </ThemeProvider>
-        </Router>
+        <HelmetProvider>
+            <Router>
+                <ThemeProvider theme={theme} >
+                    <CssBaseline />
+                    <NavBar />
+                    {isLoading ? <Loader /> : (
+                        <div className="app" >
+                            <Routes>
+                                <Route path="/" element={
+                                    <ProtectedRoute >
+                                        <Home />
+                                    </ProtectedRoute>
+                                } />
+                                <Route path="/me" element={
+                                    <ProtectedRoute >
+                                        <Profile type="own" />
+                                    </ProtectedRoute>
+                                } />
+                                <Route path="/me/update" element={
+                                    <ProtectedRoute >
+                                        <UpdateProfile />
+                                    </ProtectedRoute>
+                                } />
+                                <Route path="/user/:id" element={
+                                    <ProtectedRoute >
+                                        <Profile type="other" />
+                                    </ProtectedRoute>
+                                } />
+                                <Route path="/post/:id" element={
+                                    <ProtectedRoute >
+                                        <Post />
+                                    </ProtectedRoute>
+                                } />
+                                <Route path="/search" element={
+                                    <ProtectedRoute >
+                                        <Search />
+                                    </ProtectedRoute>
+                                } />
+                                <Route path="/me/conversation" element={
+                                    <ProtectedRoute >
+                                        <Conversation />
+                                    </ProtectedRoute>
+                                } />
+                                <Route path="/login" element={<LogIn />} />
+                                <Route path="*" element={<NotFound />} />
+                            </Routes>
+                            <Snackbar open={isErrorOpen} autoHideDuration={3000} onClose={handleErrorClose} anchorOrigin={{
+                                vertical: "bottom",
+                                horizontal: isMobileScreen ? "center" : "left"
+                            }} >
+                                <CustomAlert onClose={handleErrorClose} severity="error" className="w-fit mx-auto md:mr-auto ">{error}</CustomAlert>
+                            </Snackbar>
+                        </div>
+                    )}
+                </ThemeProvider>
+            </Router>
+        </HelmetProvider>
     );
 }
 

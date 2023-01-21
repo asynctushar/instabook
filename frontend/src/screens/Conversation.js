@@ -12,6 +12,7 @@ import { changeMode } from '../redux/actions/appAction';
 import UserImage from "../components/UserImage";
 import { io } from 'socket.io-client';
 import ConversationBox from "../components/ConversationBox";
+import MetaData from '../customs/MetaData';
 
 const Conversation = () => {
     const [myMessage, setMyMessage] = useState('');
@@ -119,6 +120,8 @@ const Conversation = () => {
     }
 
     return (
+        <Fragment>
+            <MetaData title="Conversation"/>
         <WidgetWrapper m="2rem" height="80vh" maxHeight="80vh" display="flex" justifyContent="center">
             {conversations.length < 1 && id.length < 1 ? (
                 <Typography textAlign="center" variant="h4" sx={{ mt: '10rem' }}> No conversation yet </Typography>
@@ -265,7 +268,8 @@ const Conversation = () => {
                     )}
                 </Fragment>
             )}
-        </WidgetWrapper >
+            </WidgetWrapper >
+            </Fragment>
     )
 }
 export default Conversation;

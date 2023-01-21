@@ -11,6 +11,7 @@ import { deletePost, getSinglePost, likePost, unlikePost } from '../redux/action
 import CommentsWidget from '../components/CommentsWidget';
 import postSlice from '../redux/slices/postSlice';
 import NotFound from '../screens/NotFound';
+import MetaData from '../customs/MetaData';
 
 const Post = () => {
     const { id } = useParams();
@@ -50,77 +51,80 @@ const Post = () => {
             {isLoading ? <Loader /> : (
                 <Fragment>
                     {!singlePost ? <NotFound /> : (
-                        <Box display={isMobileScreen ? "block" : "flex"} justifyContent="space-evenly" gap="1rem" m="2rem">
-                            {!isMobileScreen && <Button onClick={() => navigate(-1)} size="large" variant="contained" sx={{ alignSelf: "flex-start" }}>Back</Button>}
-                            <WidgetWrapper width={isMobileScreen ? undefined : "50%"} mb={isMobileScreen ? "1rem" : "unset"} height="fit-content">
-                                <User userId={singlePost.user} />
-                                <Typography color={palette.neutral.main} sx={{ mt: '1rem', wordWrap: "break-word" }}>{singlePost.description}</Typography>
-                                {singlePost.picture && (
-                                    <img
-                                        width="100%"
-                                        height="auto"
-                                        style={{ borderRadius: ".75rem", marginTop: ".75rem", cursor: "pointer" }}
-                                        src={singlePost.picture.url}
-                                        alt={singlePost.picture.public_id}
-                                    />
-                                )}
-                                <FlexBetween mt="1rem">
-                                    <FlexBetween gap="1rem" >
-                                        <FlexBetween gap=".3rem" >
-                                            {singlePost.likes[ownUser._id] ? (
-                                                <Tooltip title="unlike" >
-                                                    <IconButton onClick={unlikeHandler} >
-                                                        <FavoriteOutlined style={{ fontSize: "1.5rem" }} sx={{ color: palette.primary.main }} />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            ) : (
-                                                <Tooltip title="like" >
-                                                    <IconButton onClick={likeHandler}>
-                                                        <FavoriteBorderOutlined style={{ fontSize: "1.5rem" }} sx={{ color: palette.primary.main }} />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            )}
-                                            <Typography>{Object.keys(singlePost.likes).length}</Typography>
+                        <Fragment>
+                            <MetaData title="Post" description={singlePost.description} />
+                            <Box display={isMobileScreen ? "block" : "flex"} justifyContent="space-evenly" gap="1rem" m="2rem">
+                                {!isMobileScreen && <Button onClick={() => navigate(-1)} size="large" variant="contained" sx={{ alignSelf: "flex-start" }}>Back</Button>}
+                                <WidgetWrapper width={isMobileScreen ? undefined : "50%"} mb={isMobileScreen ? "1rem" : "unset"} height="fit-content">
+                                    <User userId={singlePost.user} />
+                                    <Typography color={palette.neutral.main} sx={{ mt: '1rem', wordWrap: "break-word" }}>{singlePost.description}</Typography>
+                                    {singlePost.picture && (
+                                        <img
+                                            width="100%"
+                                            height="auto"
+                                            style={{ borderRadius: ".75rem", marginTop: ".75rem", cursor: "pointer" }}
+                                            src={singlePost.picture.url}
+                                            alt={singlePost.picture.public_id}
+                                        />
+                                    )}
+                                    <FlexBetween mt="1rem">
+                                        <FlexBetween gap="1rem" >
+                                            <FlexBetween gap=".3rem" >
+                                                {singlePost.likes[ownUser._id] ? (
+                                                    <Tooltip title="unlike" >
+                                                        <IconButton onClick={unlikeHandler} >
+                                                            <FavoriteOutlined style={{ fontSize: "1.5rem" }} sx={{ color: palette.primary.main }} />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                ) : (
+                                                    <Tooltip title="like" >
+                                                        <IconButton onClick={likeHandler}>
+                                                            <FavoriteBorderOutlined style={{ fontSize: "1.5rem" }} sx={{ color: palette.primary.main }} />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                )}
+                                                <Typography>{Object.keys(singlePost.likes).length}</Typography>
+                                            </FlexBetween>
                                         </FlexBetween>
+                                        <Box>
+                                            {singlePost.user === ownUser._id && (
+                                                <Fragment>
+                                                    <Tooltip title="delete post" >
+                                                        <IconButton onClick={() => setIsDialogOpen(true)}>
+                                                            <Delete style={{ fontSize: "1.3rem" }} />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                    <Dialog
+                                                        fullWidth={true}
+                                                        open={isDialogOpen}
+                                                        onClose={() => setIsDialogOpen(false)}
+                                                        aria-labelledby="responsive-dialog-title"
+                                                    >
+                                                        <DialogTitle id="responsive-dialog-title">
+                                                            {"Do you want to delete your post?"}
+                                                        </DialogTitle>
+                                                        <DialogActions>
+                                                            <Button variant="contained" autoFocus onClick={() => setIsDialogOpen(false)} color="primary">
+                                                                No
+                                                            </Button>
+                                                            <Button variant="outlined" onClick={deleteHandler} autoFocus color="error">
+                                                                Yes
+                                                            </Button>
+                                                        </DialogActions>
+                                                    </Dialog>
+                                                </Fragment>
+                                            )}
+                                            <Tooltip title="share" >
+                                                <IconButton>
+                                                    <ShareOutlined style={{ fontSize: "1.3rem" }} />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Box>
                                     </FlexBetween>
-                                    <Box>
-                                        {singlePost.user === ownUser._id && (
-                                            <Fragment>
-                                                <Tooltip title="delete post" >
-                                                    <IconButton onClick={() => setIsDialogOpen(true)}>
-                                                        <Delete style={{ fontSize: "1.3rem" }} />
-                                                    </IconButton>
-                                                </Tooltip>
-                                                <Dialog
-                                                    fullWidth={true}
-                                                    open={isDialogOpen}
-                                                    onClose={() => setIsDialogOpen(false)}
-                                                    aria-labelledby="responsive-dialog-title"
-                                                >
-                                                    <DialogTitle id="responsive-dialog-title">
-                                                        {"Do you want to delete your post?"}
-                                                    </DialogTitle>
-                                                    <DialogActions>
-                                                        <Button variant="contained" autoFocus onClick={() => setIsDialogOpen(false)} color="primary">
-                                                            No
-                                                        </Button>
-                                                        <Button variant="outlined" onClick={deleteHandler} autoFocus color="error">
-                                                            Yes
-                                                        </Button>
-                                                    </DialogActions>
-                                                </Dialog>
-                                            </Fragment>
-                                        )}
-                                        <Tooltip title="share" >
-                                            <IconButton>
-                                                <ShareOutlined style={{ fontSize: "1.3rem" }} />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </Box>
-                                </FlexBetween>
-                            </WidgetWrapper>
-                            <CommentsWidget comments={singlePost.comments} postId={singlePost._id} />
-                        </Box>
+                                </WidgetWrapper>
+                                <CommentsWidget comments={singlePost.comments} postId={singlePost._id} />
+                            </Box>
+                        </Fragment>
                     )}
                 </Fragment>
             )}
