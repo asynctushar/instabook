@@ -7,6 +7,8 @@ const getFormattedUser = require('../utils/getFormattedUser');
 const sendToken = require("../utils/sendToken");
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
+const Conversation = require("../models/Conversation");
+const Message = require("../models/Message");
 
 
 // Register new user
@@ -292,10 +294,10 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
             userCommentsPost.comments = userCommentsPost.comments.filter((commentId) => commentId.toString() !== userComment.id);
             await userCommentsPost.save();
         }
-        
+
         await userComment.delete();
     }))
-    
+
     // delete user's all posts
     await Promise.all(userPosts.map(async (userPost) => {
         if (userPost.picture.public_id) {
@@ -303,6 +305,20 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
         }
 
         await userPost.delete();
+    }))
+
+    // delete user's all conversation and messages
+    const conversations = await Conversation.find({
+        members: { $in: [req.user.id] }
+    });
+
+    await Promise.all(conversations.map(async (conversation) => {
+        const messages = await Message.find({
+            conversationId: conversation._id
+        });
+
+        await Promise.all(messages.map(async (message) => await message.delete()));
+        return await conversation.delete();
     }))
 
     await cloudinary.uploader.destroy(req.user.avatar.public_id);
