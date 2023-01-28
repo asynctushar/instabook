@@ -30,9 +30,12 @@ const Post = () => {
             navigate(-1);
             dispatch(setDeleteStatus(false))
         }
+    }, [dispatch, isDeleted]);  // eslint-disable-line react-hooks/exhaustive-deps
 
-        dispatch(getSinglePost(id))
-    }, [id, dispatch, isDeleted]);  // eslint-disable-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        dispatch(getSinglePost(id));
+
+    }, [id, dispatch])
 
     const likeHandler = () => {
         dispatch(likePost(singlePost._id));
