@@ -6,9 +6,9 @@ const ErrorHandler = require("../utils/errorHandler");
 const getFormattedUser = require('../utils/getFormattedUser');
 const sendToken = require("../utils/sendToken");
 const cloudinary = require('cloudinary').v2;
-const fs = require('fs');
 const Conversation = require("../models/Conversation");
 const Message = require("../models/Message");
+const getDataUri = require("../utils/getDataUri");
 
 
 // Register new user
@@ -23,15 +23,14 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
     const user = await User.create({ name, email, password, location, occupation, avatar });
 
     // cloudinary
-    const myCloud = await cloudinary.uploader.upload(avatar.path, {
+    const avatarUri = getDataUri(avatar);
+
+    const myCloud = await cloudinary.uploader.upload(avatarUri.content, {
         folder: '/instabook/avatars',
         width: 1000,
         height: 1000,
         crop: "scale",
     });
-
-    // removing temp image file
-    fs.rm(avatar.path, { recursive: true }, (err) => { });
 
     user.avatar = {
         public_id: myCloud.public_id,
@@ -77,16 +76,14 @@ exports.updateUser = catchAsyncErrors(async (req, res, next) => {
     })
 
     if (avatar) {
-        // cloudinary
-        const myCloud = await cloudinary.uploader.upload(avatar.path, {
+        const avatarUri = getDataUri(avatar);
+
+        const myCloud = await cloudinary.uploader.upload(avatarUri.content, {
             folder: '/instabook/avatars',
             width: 1000,
             height: 1000,
             crop: "scale",
         });
-
-        // removing temp image file
-        fs.rm(avatar.path, { recursive: true }, (err) => { });
 
         // distroy previous avatar
         await cloudinary.uploader.destroy(user.avatar.public_id);
@@ -290,7 +287,7 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
     await Promise.all(userComments.map(async (userComment) => {
         const userCommentsPost = await Post.findById(userComment.post)
 
-        if (userCommentsPost) {   
+        if (userCommentsPost) {
             userCommentsPost.comments = userCommentsPost.comments.filter((commentId) => commentId.toString() !== userComment.id);
             await userCommentsPost.save();
         }

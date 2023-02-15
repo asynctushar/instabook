@@ -4,7 +4,7 @@ const Comment = require('../models/Comment');
 const ErrorHandler = require('../utils/errorHandler');
 const User = require('../models/User');
 const cloudinary = require('cloudinary').v2;
-const fs = require('fs');
+const getDataUri = require('../utils/getDataUri');
 
 // create a post
 exports.createPost = catchAsyncErrors(async (req, res, next) => {
@@ -19,13 +19,12 @@ exports.createPost = catchAsyncErrors(async (req, res, next) => {
 
     // add cloudinary later
     if (picture) {
-        const myCloud = await cloudinary.uploader.upload(picture.path, {
+        const pictureUri = getDataUri(picture);
+
+        const myCloud = await cloudinary.uploader.upload(pictureUri.content, {
             folder: '/instabook/pictures',
             crop: "scale",
         });
-
-        // removing temp image file
-        fs.rm(picture.path, { recursive: true }, (err) => { });
 
         post.picture = {
             public_id: myCloud.public_id,
